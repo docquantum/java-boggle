@@ -1,3 +1,3 @@
-#   CHESS
+#   BOGGLE
 
 
