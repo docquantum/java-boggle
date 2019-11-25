@@ -52,6 +52,7 @@ public class DictionaryLoader {
             try {
                 fileLines = Files.lines(filePath)
                         .map(String::strip)
+                        .filter(str -> str.length() > 2)
                         .sorted().distinct()
                         .collect(Collectors.toList());
             } catch (IOException e){
@@ -64,7 +65,6 @@ public class DictionaryLoader {
         // Remove duplicates and empty
         lines = lines.stream()
                 .sorted().distinct()
-                .filter(str -> !str.isEmpty())
                 .collect(Collectors.toList());
         return lines;
     }
