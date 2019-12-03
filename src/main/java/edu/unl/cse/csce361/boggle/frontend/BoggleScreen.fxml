@@ -27,7 +27,6 @@
       <Label layoutX="40.0" layoutY="22.0" text="Player Name" />
       <Label layoutX="9.0" layoutY="66.0" text="Total Score:" />
       <Label layoutX="78.0" layoutY="67.0" text="0" />
-
       <GridPane layoutX="65.0" layoutY="141.0" prefHeight="152.0" prefWidth="214.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.4000244140625" minWidth="10.0" prefWidth="107.79998779296875" />
