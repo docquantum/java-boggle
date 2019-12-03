@@ -1,6 +1,7 @@
 package edu.unl.cse.csce361.boggle.frontend;
 
 import edu.unl.cse.csce361.boggle.logic.GameBoard;
+import edu.unl.cse.csce361.boggle.logic.GameManager;
 import javafx.application.Application;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -59,7 +60,12 @@ public class ScreenController {
     @FXML
     public void singlePlay (Event event) throws IOException {
         switchScreen(event, "BoggleScreen.fxml");
+
         //implement switch screen to order summary here
+    }
+
+    @FXML
+    public void exitGame (Event event) throws IOException {
     }
 
     @FXML
