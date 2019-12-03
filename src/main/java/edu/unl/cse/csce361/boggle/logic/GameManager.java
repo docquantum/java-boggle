@@ -1,5 +1,7 @@
 package edu.unl.cse.csce361.boggle.logic;
 
+import edu.unl.cse.csce361.boggle.backend.DictionaryLoader;
+
 import java.awt.List;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -10,17 +12,15 @@ public class GameManager {
 	Solver answer;
 	GameBoard board;
 	String gameBoard[][];
-	Timer time = new Timer();
-	TimerTask task = new TimerTask() {
 
-		@Override
-		public void run() {
-			
-			
-		}
-		
-	};
+	private static GameManager uniqueInstance = new GameManager();
+	private GameManager() {}
+	public static GameManager getInstance() {
+		return uniqueInstance;
+	}
+
 	Solver getAnswers(String board[][]) {
+//		answer.setDic();
 		answer.entireSequenceFinder(board);		
 		return answer;
 	}
