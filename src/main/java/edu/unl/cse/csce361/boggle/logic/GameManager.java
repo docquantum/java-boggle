@@ -50,6 +50,4 @@ public class GameManager {
 	    int scores = 0;
 	    return scores;
 	}
-	
-
 }
