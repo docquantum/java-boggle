@@ -1,5 +1,6 @@
 package edu.unl.cse.csce361.boggle.logic;
 
+import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.backend.DictionaryLoader;
 
 import java.awt.List;
@@ -11,6 +12,7 @@ public class GameManager {
 	Solver answer;
 	GameBoard board;
 	String gameBoard[][];
+	private static BackendManager bm = BackendManager.getInstance();
 
 	private static GameManager uniqueInstance = new GameManager();
 	private GameManager() {}
@@ -21,6 +23,7 @@ public class GameManager {
 
 	Solver getAnswers(String board[][]) {
 //		answer.setDic();
+		answer.setDic(bm.returnDictionary());
 		answer.entireSequenceFinder(board);		
 		return answer;
 	}
