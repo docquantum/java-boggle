@@ -9,17 +9,24 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameManager {
-	Solver answer;
-	GameBoard board;
-	String gameBoard[][];
-	private static BackendManager bm = BackendManager.getInstance();
+	private Solver answer;
+	private static GameBoard board;
+	private static BackendManager bm;
+	private static GameManager uniqueInstance = null;
+	private String gameBoard[][];
 
-	private static GameManager uniqueInstance = new GameManager();
-	private GameManager() {}
-	public static GameManager getInstance() {
-		return uniqueInstance;
+	private GameManager(){
+		board = GameBoard.getInstance();
+		bm = BackendManager.getInstance();
+		answer = new Solver();
 	}
 
+	public static GameManager getInstance() {
+		if(uniqueInstance == null){
+			uniqueInstance = new GameManager();
+		}
+		return uniqueInstance;
+	}
 
 	private List<String> getAnswers(String board[][]) {
 		answer.setDic(bm.returnDictionary());
@@ -39,9 +46,8 @@ public class GameManager {
 	}
 
 	//gets the score for singlePlayer
-	public int getScores(List singlePlayer){
-	    int scores = 0;
-	    return scores;
+	public int getScores(List<String> singlePlayer){
+	    return BoggleUtils.calculateScore(bm.returnDictionary(), singlePlayer);
 	}
 
 	//Save for Sprint 2
