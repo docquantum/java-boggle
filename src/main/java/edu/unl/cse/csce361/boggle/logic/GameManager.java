@@ -21,31 +21,31 @@ public class GameManager {
 	}
 
 
-	List<String> getAnswers(String board[][]) {
+	private List<String> getAnswers(String board[][]) {
 		answer.setDic(bm.returnDictionary());
 		answer.entireSequenceFinder(board);		
 		return answer.words;
 	}
 
 	//gets the game board
-    String[][] getBoard() {
+    public String[][] getBoard() {
 		return board.getGameBoard();			
 	}
 
 	//makes a new game-board
-	String[][] getNewBoard(){
+	public String[][] getNewBoard(){
 		board.generateGameBoard();
 		return board.getGameBoard();
 	}
 
 	//gets the score for singlePlayer
-	int getScores(List singlePlayer1){
+	public int getScores(List singlePlayer){
 	    int scores = 0;
 	    return scores;
 	}
 
 	//Save for Sprint 2
-	int getScores(ArrayList<ArrayList<String>> Players){
+	private int getScores(ArrayList<ArrayList<String>> Players){
 	    int scores = 0;
 	    return scores;
 	}
