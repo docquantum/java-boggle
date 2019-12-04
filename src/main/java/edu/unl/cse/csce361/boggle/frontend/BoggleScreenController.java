@@ -80,7 +80,9 @@ public class BoggleScreenController implements Initializable {
 
     @FXML
     public void submitWord (Event event) throws IOException {
-        wordViewer.getItems().add(playerInput.getText());
+        if(!playerInput.getText().isBlank()){
+            wordViewer.getItems().add(playerInput.getText().trim());
+        }
         playerInput.clear();
         //implement switch screen to order summary here
     }
