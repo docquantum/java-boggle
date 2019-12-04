@@ -3,8 +3,8 @@ package edu.unl.cse.csce361.boggle.logic;
 import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.backend.DictionaryLoader;
 
-import java.awt.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,11 +21,10 @@ public class GameManager {
 	}
 
 
-	Solver getAnswers(String board[][]) {
-//		answer.setDic();
+	List<String> getAnswers(String board[][]) {
 		answer.setDic(bm.returnDictionary());
 		answer.entireSequenceFinder(board);		
-		return answer;
+		return answer.words;
 	}
 
 	//gets the game board
