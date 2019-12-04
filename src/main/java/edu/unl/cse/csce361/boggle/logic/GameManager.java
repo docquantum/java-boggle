@@ -6,8 +6,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameManager {
+    private static GameManager uniqueInstance;
+
+    public static GameManager getInstance() {
+        if (uniqueInstance == null) {
+            uniqueInstance = new GameManager();
+        }
+        return uniqueInstance;
+    }
+
 	Solver answer;
-	GameBoard board;
+	GameBoard board = GameBoard.getInstance();
 	String gameBoard[][];
 	Timer time = new Timer();
 	TimerTask task = new TimerTask() {
@@ -16,41 +25,41 @@ public class GameManager {
 		}
 	};
 
-	Solver getAnswers(String board[][]) {
+	public Solver getAnswers(String board[][]) {
 		answer.entireSequenceFinder(board);		
 		return answer;
 	}
 
 	//gets the game board
-    String[][] getBoard() {
+    public String[][] getBoard() {
 		return board.getGameBoard();			
 	}
 
 	//makes a new game-board
-	String[][] getNewBoard(){
+	public String[][] getNewBoard(){
 		board.generateGameBoard();
 		return board.getGameBoard();
 	}
 
 	//gets the score for singlePlayer
-	int getScores(List singlePlayer1){
+	public int getScores(List singlePlayer1){
 	    int scores = 0;
 	    return scores;
 	}
 
 	//Save for Sprint 2
-	int getScores(ArrayList<ArrayList<String>> Players){
+	public int getScores(ArrayList<ArrayList<String>> Players){
 	    int scores = 0;
 	    return scores;
 	}
 	
 	//gets timer
-	Timer getTimer() {
+	public Timer getTimer() {
 		return time;
 	}
 
 	//Sets a new timer
-	Timer resetTimer() {
+	public Timer resetTimer() {
 		time = new Timer();
 		return time;
 	}
