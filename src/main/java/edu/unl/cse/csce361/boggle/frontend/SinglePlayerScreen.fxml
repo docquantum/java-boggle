@@ -20,12 +20,11 @@
          <font>
             <Font size="14.0" />
          </font></Button>
-      <Label layoutX="247.0" layoutY="121.0" text="Enter Your Name">
+      <Label layoutX="198.0" layoutY="123.0" text="Enter Your Name and Press Enter">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="PlayerName" layoutX="210.0" layoutY="153.0" prefHeight="26.0" prefWidth="114.0" />
-      <Button layoutX="332.0" layoutY="154.0" mnemonicParsing="false" onAction="#submitName" text="Submit" />
+      <TextField fx:id="PlayerName" layoutX="220.0" layoutY="154.0" onAction="#submitName" prefHeight="27.0" prefWidth="159.0" />
    </children>
 </AnchorPane>
