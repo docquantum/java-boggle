@@ -20,10 +20,25 @@ import java.io.IOException;
 
 public class ScreenController {
 
+    GameManager manage = GameManager.getInstance();
 
+    @FXML
+    private TextField PlayerName;
 
     @FXML
     public void singlePlay (Event event) throws IOException {
+        switchScreen(event, "SinglePlayerScreen.fxml");
+        //implement switch screen to order summary here
+    }
+
+    @FXML
+    public void submitName(){
+        String playerName = PlayerName.getText();
+        manage.playerName(playerName);
+    }
+
+    @FXML
+    public void gamePlay (Event event) throws IOException {
         switchScreen(event, "BoggleScreen.fxml");
         //implement switch screen to order summary here
     }

@@ -16,6 +16,7 @@ public class BoggleScreenController implements Initializable {
 
     GameManager manage = GameManager.getInstance();
     String[][] dice = manage.getBoard();
+    String playerName = manage.getPlayerName();
 
     @FXML
     private TextField playerInput;
@@ -53,10 +54,13 @@ public class BoggleScreenController implements Initializable {
     private Label lbl14;
     @FXML
     private Label lbl15;
+    @FXML
+    private Label playname;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setBoggleScreenLabels();
+        setPlayerName();
     }
 
     public void setBoggleScreenLabels(){
@@ -76,6 +80,14 @@ public class BoggleScreenController implements Initializable {
         lbl13.setText(dice[3][1]);
         lbl14.setText(dice[3][2]);
         lbl15.setText(dice[3][3]);
+    }
+
+
+    public void setPlayerName(){
+        if(playerName.isEmpty() || playerName.isBlank()){
+            playname.setText("Default Player");
+        }
+        playname.setText(playerName);
     }
 
     @FXML
