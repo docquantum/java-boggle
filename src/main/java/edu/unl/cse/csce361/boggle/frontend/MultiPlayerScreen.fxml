@@ -16,15 +16,32 @@
             <Font name="Comic Sans MS" size="24.0" />
          </font>
       </Text>
-      <Button layoutX="243.0" layoutY="261.0" mnemonicParsing="false" onAction="#gamePlay" prefHeight="42.0" prefWidth="114.0" text="Start Game">
+      <Button layoutX="240.0" layoutY="322.0" mnemonicParsing="false" onAction="#gamePlay" prefHeight="42.0" prefWidth="114.0" text="Start Game">
          <font>
             <Font size="14.0" />
-         </font></Button>
-      <Label layoutX="247.0" layoutY="122.0" text="Enter Your Name">
+         </font>
+      </Button>
+      <Label layoutX="247.0" layoutY="75.0" text="Enter Your Name">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="PlayerName" layoutX="220.0" layoutY="154.0" prefHeight="27.0" prefWidth="159.0" />
+      <TextField fx:id="PlayerName" layoutX="220.0" layoutY="104.0" prefHeight="27.0" prefWidth="159.0" />
+      <Label layoutX="247.0" layoutY="158.0" text="Your I.P Address">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="IP_Address" layoutX="248.0" layoutY="178.0" text="IP Address Here">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="201.0" layoutY="220.0" text="Enter The Port You Want To Use">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <TextField layoutX="220.0" layoutY="249.0" prefHeight="27.0" prefWidth="159.0" />
    </children>
 </AnchorPane>

@@ -28,19 +28,22 @@ public class ScreenController {
     @FXML
     public void singlePlay (Event event) throws IOException {
         switchScreen(event, "SinglePlayerScreen.fxml");
-        //implement switch screen to order summary here
+    }
+
+    @FXML
+    public void multiPlay (Event event) throws IOException {
+        switchScreen(event, "MultiPlayerScreen.fxml");
     }
 
     @FXML
     public void submitName(){
-        String playerName = PlayerName.getText();
-        manage.playerName(playerName);
     }
 
     @FXML
     public void gamePlay (Event event) throws IOException {
+        String playerName = PlayerName.getText();
+        manage.playerName(playerName);
         switchScreen(event, "BoggleScreen.fxml");
-        //implement switch screen to order summary here
     }
 
     @FXML
