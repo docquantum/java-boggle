@@ -28,10 +28,15 @@ public class Solver {
         if (sequence.length() < 3) {
             return false;
         }
-        for (int i = 0; i < this.dic.size(); i++) {
-            if (sequence.equalsIgnoreCase(this.dic.get(i))) {
-                return true;
-            }
+//        for (int i = 0; i < this.dic.size(); i++) {
+//            if (sequence.equalsIgnoreCase(this.dic.get(i))) {
+//                return true;
+//            }
+//        }
+
+        if(this.dic.contains(sequence.)){
+
+            return true;
         }
         return false;
     }

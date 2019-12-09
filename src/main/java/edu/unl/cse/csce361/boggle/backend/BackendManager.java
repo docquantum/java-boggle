@@ -24,6 +24,9 @@ public class BackendManager {
         List<Path> path = new ArrayList<Path>();
         List<String> dic = new ArrayList<String>();
 
+
+//        src/main/resources/words/dicts/freebsd
+//        src/test/data/files
         path = getFilePathsInDir("src/test/data/files");
 
         dic = getLinesInFiles(path);

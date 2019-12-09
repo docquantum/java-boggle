@@ -28,7 +28,7 @@ public class GameManager {
 		return uniqueInstance;
 	}
 
-	private List<String> getAnswers(String board[][]) {
+	public List<String> getAnswers(String board[][]) {
 		answer.setDic(bm.returnDictionary());
 		answer.entireSequenceFinder(board);		
 		return answer.words;
