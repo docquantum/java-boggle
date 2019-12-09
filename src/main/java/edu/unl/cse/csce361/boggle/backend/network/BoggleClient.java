@@ -1,11 +1,7 @@
 package edu.unl.cse.csce361.boggle.backend.network;
 
-import edu.unl.cse.csce361.boggle.logic.GameBoard;
-import edu.unl.cse.csce361.boggle.logic.GameManager;
-
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -17,7 +13,7 @@ public class BoggleClient implements Runnable{
     private Thread getData;
     private Thread selfThread;
     private Queue<DataCodes> codeQueue;
-    public String player;
+    public String player; // TODO: Only used for testing, remove very soon
     private boolean running;
 
     public BoggleClient(String ip, int port) throws IOException {
@@ -41,7 +37,7 @@ public class BoggleClient implements Runnable{
         getData.join();
     }
 
-    public synchronized void sendData(DataCodes code){
+    public synchronized void queueData(DataCodes code){
         codeQueue.add(code);
         synchronized (sendData){
             sendData.notify();
@@ -72,7 +68,7 @@ public class BoggleClient implements Runnable{
                         switch (code) {
                             case PLAYER_NAME:
                                 System.out.println("Client asked to send name");
-                                sendData(DataCodes.PLAYER_NAME);
+                                queueData(DataCodes.PLAYER_NAME);
                                 break;
                             case ALL_PLAYERS:
                                 break;
