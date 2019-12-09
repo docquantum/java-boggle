@@ -34,8 +34,9 @@ public class BoggleClient implements Runnable{
         synchronized (sendData){
             sendData.notify();
         }
-        inStream.close();
-        outStream.close();
+//        inStream.close();
+//        outStream.close();
+        socket.close();
         sendData.join();
         getData.join();
     }
@@ -67,7 +68,7 @@ public class BoggleClient implements Runnable{
                     try {
                         System.out.println("[Client " + Thread.currentThread().getName() + "] Waiting for input...");
                         DataCodes code = (DataCodes) inStream.readObject();
-                        System.out.println("Client recieved " + code.toString());
+                        System.out.println("[Client " + Thread.currentThread().getName() + "] recieved " + code.toString());
                         switch (code) {
                             case PLAYER_NAME:
                                 System.out.println("Client asked to send name");
