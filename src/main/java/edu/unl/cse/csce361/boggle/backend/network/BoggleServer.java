@@ -112,8 +112,9 @@ public class BoggleServer implements Runnable {
             synchronized (sendData){
                 sendData.notify();
             }
-            inStream.close();
-            outStream.close();
+//            inStream.close();
+//            outStream.close();
+            socket.close();
             getData.join();
             sendData.join();
             cleanUpThread(Thread.currentThread());
@@ -146,7 +147,7 @@ public class BoggleServer implements Runnable {
                         try {
                             System.out.println("[CH " + Thread.currentThread().getName() + "] Waiting for input...");
                             DataCodes code = (DataCodes) inStream.readObject();
-                            System.out.println("CH recieved " + code.toString());
+                            System.out.println("[CH " + Thread.currentThread().getName() + "] recieved " + code.toString());
                             switch (code){
                                 case PLAYER_NAME:
                                     System.out.println((String) inStream.readObject());
@@ -186,14 +187,16 @@ public class BoggleServer implements Runnable {
                 @Override
                 public void run() {
                     while(handlerRunning){
-                        try {
-                            // waiting until woken
-                            System.out.println("[CH " + Thread.currentThread().getName() + "] Waiting until woken...");
-                            synchronized (Thread.currentThread()){
-                                Thread.currentThread().wait();
+                        if(codeQueue.isEmpty()){
+                            try {
+                                // waiting until woken
+                                System.out.println("[CH " + Thread.currentThread().getName() + "] Waiting until woken...");
+                                synchronized (Thread.currentThread()){
+                                    Thread.currentThread().wait();
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
                         if(!handlerRunning){
                             break;

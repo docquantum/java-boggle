@@ -43,10 +43,10 @@ public class networkMain {
 
         sleep(100);
         server.getClients().get(0).sendData(DataCodes.GAME_BOARD);
-        sleep(100);
+        //sleep(100);
         client.player = "Player 1";
-        server.getClients().get(0).sendData(DataCodes.PLAYER_NAME);
-        sleep(100);
+        //server.getClients().get(0).sendData(DataCodes.PLAYER_NAME);
+        //sleep(100);
         server.getClients().get(0).sendData(DataCodes.EXIT);
         server.getClients().get(1).sendData(DataCodes.EXIT);
         server.getClients().get(2).sendData(DataCodes.EXIT);
