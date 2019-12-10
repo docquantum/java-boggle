@@ -2,6 +2,7 @@ package edu.unl.cse.csce361.boggle.logic;
 
 import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.backend.DictionaryLoader;
+import javafx.event.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,10 @@ public class GameManager {
 
     public void playerName(String Name){
 		PlayerName = Name;
+	}
+
+	public void getPlayerInput(ArrayList<String> playerInput){
+		boolean present = playerInput.contains("yellow");
 	}
 
 	//gets the game board

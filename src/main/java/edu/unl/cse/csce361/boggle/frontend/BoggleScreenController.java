@@ -1,12 +1,20 @@
 package edu.unl.cse.csce361.boggle.frontend;
 
 import edu.unl.cse.csce361.boggle.logic.GameManager;
+import javafx.animation.*;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.Timer;
+import javafx.animation.KeyFrame;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,7 +27,9 @@ public class BoggleScreenController implements Initializable {
     String playerName = manage.getPlayerName();
 
     @FXML
-    private TextField playerInput;
+    private TextField playerInput1;
+    @FXML
+    private Button playerInput2;
     @FXML
     private ListView<String> wordViewer;
     @FXML
@@ -56,11 +66,16 @@ public class BoggleScreenController implements Initializable {
     private Label lbl15;
     @FXML
     private Label playname;
+    @FXML
+    private Label timer;
+    private int time = 180;
+    private ArrayList<String> playerInputs;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setBoggleScreenLabels();
         setPlayerName();
+        timeline();
     }
 
     public void setBoggleScreenLabels(){
@@ -90,12 +105,35 @@ public class BoggleScreenController implements Initializable {
         playname.setText(playerName);
     }
 
+    public void timeline(){
+        Timeline timeline = new Timeline(new KeyFrame(
+                Duration.seconds(1),
+                ae -> changeTimer()));
+        timeline.setCycleCount(180);
+        timeline.play();
+    }
+
+    public void changeTimer(){
+        time--;
+        timer.setText(time + " seconds");
+        canChange();
+    }
+
+    public void canChange(){
+        if(time == 0){
+            playerInput1.setEditable(false);
+            playerInput2.isDisable();
+            playerInputs.addAll(wordViewer.getItems());
+            manage.getPlayerInput(playerInputs);
+        }
+    }
+
+
     @FXML
     public void submitWord (Event event) throws IOException {
-        if(!playerInput.getText().isBlank()){
-            wordViewer.getItems().add(playerInput.getText().trim());
+        if(!playerInput1.getText().isBlank()){
+            wordViewer.getItems().add(playerInput1.getText().trim());
         }
-        playerInput.clear();
-        //implement switch screen to order summary here
+        playerInput1.clear();
     }
 }
