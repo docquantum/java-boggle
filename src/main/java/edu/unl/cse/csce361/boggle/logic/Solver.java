@@ -1,12 +1,14 @@
 package edu.unl.cse.csce361.boggle.logic;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Solver {
 
-    public List<String> words = new ArrayList<String>();
-    public List<String> dic = new ArrayList<String>();
+    public Set<String> words = new HashSet<String>();
+    public Set<String> dic;
     public Integer boardWidth;
     public Integer boardHeight;
 
@@ -15,11 +17,11 @@ public class Solver {
         boardHeight = 4;
     }
 
-    public void setDic(List<String> dic) {
+    public void setDic(Set<String> dic) {
         this.dic = dic;
     }
 
-    public List<String> getWords() {
+    public Set<String> getWords() {
         return words;
     }
 
@@ -34,8 +36,7 @@ public class Solver {
 //            }
 //        }
 
-        if(this.dic.contains(sequence.)){
-
+        if(this.dic.contains(sequence.toLowerCase())){
             return true;
         }
         return false;
@@ -48,7 +49,7 @@ public class Solver {
         sequence = sequence + board[i][j];
         //append valid sequences that aren't duplicates to words arraylist
         if (isInDictionary(sequence) && !this.words.contains(sequence)) {
-            this.words.add(sequence);
+            this.words.add(sequence.toLowerCase());
         }
         //navigating the adjacent cells relative to the specified char at index [i][j] (changes with each recursive call)
         for (int row = i - 1; row <= i + 1 && row < this.boardHeight; row++) {

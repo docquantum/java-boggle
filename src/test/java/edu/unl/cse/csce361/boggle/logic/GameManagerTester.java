@@ -21,9 +21,10 @@ public class GameManagerTester {
 
     @Test
     public void getAnswersTest(){
-        String[][] gameboard = {{"A","B","A","C"}, {"A", "A", "S", "A"},{"A", "L", "A", "M"}, {"A", "A", "P", "A"}};
+        String[][] gameboard = {{"D","A","D","D"}, {"A", "A", "A", "A"},{"A", "A", "A", "A"}, {"A", "A", "A", "A"}};
         List<String> expectedAnswers = new ArrayList<>();
-        expectedAnswers.add("ABA");
+        expectedAnswers.add("dad");
+        expectedAnswers.add("dada");
         assertEquals(expectedAnswers, gameManager.getAnswers(gameboard));
     }
 }

@@ -1,12 +1,8 @@
 package edu.unl.cse.csce361.boggle.logic;
 
 import edu.unl.cse.csce361.boggle.backend.BackendManager;
-import edu.unl.cse.csce361.boggle.backend.DictionaryLoader;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class GameManager {
 	private Solver answer;
@@ -28,8 +24,8 @@ public class GameManager {
 		return uniqueInstance;
 	}
 
-	public List<String> getAnswers(String board[][]) {
-		answer.setDic(bm.returnDictionary());
+	public Set<String> getAnswers(String board[][]) {
+		answer.setDic(bm.loadDictionary());
 		answer.entireSequenceFinder(board);		
 		return answer.words;
 	}
@@ -46,8 +42,8 @@ public class GameManager {
 	}
 
 	//gets the score for singlePlayer
-	public int getScores(List<String> singlePlayer){
-	    return BoggleUtils.calculateScore(bm.returnDictionary(), singlePlayer);
+	public int getScores(Set<String> singlePlayer){
+	    return BoggleUtils.calculateScore(bm.getDictionary(), singlePlayer);
 	}
 
 	//Save for Sprint 2
