@@ -11,13 +11,14 @@ import java.util.Queue;
 
 public class ClientHandler implements Runnable {
     private final BoggleServer boggleServer;
+    private final String debugName = "CH";
     private ObjectInputStream inStream;
     private ObjectOutputStream outStream;
     private Socket socket;
     private Thread sendData;
     private Thread getData;
     private Thread selfThread;
-    private Queue<DataCodes> codeQueue;
+    private Queue<OpCode> codeQueue;
     private boolean handlerRunning;
 
     public ClientHandler(BoggleServer boggleServer, Socket socket) throws IOException {
@@ -30,20 +31,20 @@ public class ClientHandler implements Runnable {
     }
 
     public void stopHandler() throws InterruptedException, IOException {
-        System.out.println("Closing CH...");
+        NetworkUtils.debugPrint(debugName,"Closing...");
         handlerRunning = false;
         synchronized (sendData){
             sendData.notify();
         }
-//            inStream.close();
-//            outStream.close();
+        inStream.close();
+        outStream.close();
         socket.close();
         getData.join();
         sendData.join();
         boggleServer.cleanUpThread(Thread.currentThread());
     }
 
-    public synchronized void queueData(DataCodes code){
+    public synchronized void queueData(OpCode code){
         codeQueue.add(code);
         synchronized (sendData){
             sendData.notify();
@@ -57,7 +58,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run(){
         this.selfThread = Thread.currentThread();
-        System.out.println("[CH " + Thread.currentThread().getName() + "] Connecting to client with: " + socket);
+        NetworkUtils.debugPrint(debugName, "Connecting to client with: " + socket);
 
         /**
          * Gets code from client, then figures out what to do with that code
@@ -68,31 +69,40 @@ public class ClientHandler implements Runnable {
             public void run() {
                 while(handlerRunning){
                     try {
-                        System.out.println("[CH " + Thread.currentThread().getName() + "] Waiting for input...");
-                        DataCodes code = (DataCodes) inStream.readObject();
-                        System.out.println("[CH " + Thread.currentThread().getName() + "] recieved " + code.toString());
+                        NetworkUtils.debugPrint(debugName, "Waiting for input...");
+                        OpCode code = (OpCode) inStream.readObject();
+                        NetworkUtils.debugPrint( debugName, "received " + code.toString());
                         switch (code){
                             case PLAYER_NAME:
+                                // Got player name from client
                                 System.out.println((String) inStream.readObject());
                                 break;
-                            case ALL_PLAYERS:
-                                break;
                             case GAME_BOARD:
-                                queueData(DataCodes.GAME_BOARD);
+                                // Client asked for game board
+                                queueData(OpCode.GAME_BOARD);
+                                break;
+                            case START_GAME:
+                                // Client started game
+                                break;
+                            case FINISHED:
+                                // client finished game
                                 break;
                             case WORD_LIST:
+                                // Got word list from client
+                                //TODO GameManager.getInstance().addWordList(inStream.readObject());
                                 break;
                             case ALL_SCORES:
-                                break;
-                            case SCORE:
+                                // Client wants all the scores
+                                queueData(OpCode.ALL_SCORES);
                                 break;
                             case EXIT:
-                                // set up exit stack...
+                                // Client has exited
+                                stopHandler();
                                 break;
                             default:
                                 break;
                         }
-                    } catch (IOException | ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException | InterruptedException e) {
                         e.printStackTrace();
                         handlerRunning = false;
                         synchronized (selfThread){
@@ -113,7 +123,7 @@ public class ClientHandler implements Runnable {
                     if(codeQueue.isEmpty()){
                         try {
                             // waiting until woken
-                            System.out.println("[CH " + Thread.currentThread().getName() + "] Waiting until woken...");
+                            NetworkUtils.debugPrint(debugName, "Waiting until woken...");
                             synchronized (Thread.currentThread()){
                                 Thread.currentThread().wait();
                             }
@@ -125,35 +135,43 @@ public class ClientHandler implements Runnable {
                         break;
                     }
                     try {
-                        System.out.println("[CH " + Thread.currentThread().getName() + "] Got pinged for " + codeQueue.peek());
+                        NetworkUtils.debugPrint(debugName, "Got pinged for " + codeQueue.peek());
                         switch (codeQueue.poll()) {
                             case PLAYER_NAME:
-                                System.out.println("Asking client to send name");
-                                outStream.writeObject(DataCodes.PLAYER_NAME);
-                                break;
-                            case ALL_PLAYERS:
+                                // Asking player for player name
+                                outStream.writeObject(OpCode.PLAYER_NAME);
                                 break;
                             case GAME_BOARD:
-                                outStream.writeObject(DataCodes.GAME_BOARD);
+                                // Telling player it's sending game board.
+                                outStream.writeObject(OpCode.GAME_BOARD);
                                 outStream.writeObject(GameManager.getInstance().getBoard());
                                 break;
+                            case START_GAME:
+                                // Telling player to start game
+                                outStream.writeObject(OpCode.START_GAME);
+                                break;
+                            case FINISHED:
+                                // Telling player everyone has finished
+                                outStream.writeObject(OpCode.FINISHED);
+                                break;
                             case WORD_LIST:
+                                // Telling client to send word list
+                                outStream.writeObject(OpCode.WORD_LIST);
                                 break;
                             case ALL_SCORES:
-                                break;
-                            case SCORE:
+                                // Sending scores to client
+                                outStream.writeObject(OpCode.ALL_SCORES);
+                                //TODO outStream.writeObject(GameManager.getInstance().getScores());
                                 break;
                             case EXIT:
-                                outStream.writeObject(DataCodes.EXIT);
-                                handlerRunning = false;
-                                synchronized (selfThread){
-                                    selfThread.notify();
-                                }
+                                // Telling client server is exiting
+                                outStream.writeObject(OpCode.EXIT);
+                                stopHandler();
                                 break;
                             default:
                                 break;
                         }
-                    } catch (IOException e){
+                    } catch (IOException | InterruptedException e){
                         e.printStackTrace();
                         handlerRunning = false;
                         synchronized (selfThread){
