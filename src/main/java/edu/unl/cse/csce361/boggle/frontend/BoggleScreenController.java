@@ -2,6 +2,7 @@ package edu.unl.cse.csce361.boggle.frontend;
 
 import edu.unl.cse.csce361.boggle.logic.GameManager;
 import javafx.animation.*;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -68,8 +69,8 @@ public class BoggleScreenController implements Initializable {
     private Label playname;
     @FXML
     private Label timer;
-    private int time = 180;
-    private ArrayList<String> playerInputs;
+    private int time = 10;
+    private ArrayList<String> playerInputs = new ArrayList<String>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -109,21 +110,24 @@ public class BoggleScreenController implements Initializable {
         Timeline timeline = new Timeline(new KeyFrame(
                 Duration.seconds(1),
                 ae -> changeTimer()));
-        timeline.setCycleCount(180);
+        timeline.setCycleCount(10);
+        timeline.setOnFinished(event -> canChange());
         timeline.play();
     }
 
     public void changeTimer(){
         time--;
         timer.setText(time + " seconds");
-        canChange();
     }
 
     public void canChange(){
         if(time == 0){
             playerInput1.setEditable(false);
             playerInput2.isDisable();
-            playerInputs.addAll(wordViewer.getItems());
+            ObservableList<String> answers = wordViewer.getItems();
+            for(String elem: answers){
+                playerInputs.add(elem);
+            }
             manage.getPlayerInput(playerInputs);
         }
     }
