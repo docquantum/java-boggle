@@ -2,6 +2,7 @@ package edu.unl.cse.csce361.boggle.logic;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BoggleUtils {
@@ -9,7 +10,7 @@ public class BoggleUtils {
      * Set of static utils to help with calculations
      */
 
-    public static int calculateScore(List<String> solutions, List<String> inputs){
+    public static int calculateScore(Set<String> solutions, Set<String> inputs){
         int score = 0;
 
         List<Integer> lengths = inputs.stream()
@@ -35,7 +36,7 @@ public class BoggleUtils {
         return score;
     }
 
-    public static List<String> removeDupilicates(List<String> ... lists){
+    public static Set<Set<String>> removeDupilicates(Set<String> ... sets){
         return null;
     }
 

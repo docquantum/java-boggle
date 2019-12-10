@@ -52,9 +52,15 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/java</directory>
+                <directory>src/main/java/edu/unl/cse/csce361/boggle/frontend</directory>
                 <includes>
                     <include>**/*.fxml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>*</include>
                 </includes>
             </resource>
         </resources>

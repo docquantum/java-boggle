@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>edu.unl.cse.csce361.boggle</OriginalElement>
+  <nodes>
+    <node x="279.0" y="315.0">edu.unl.cse.csce361.boggle.frontend.Main</node>
+    <node x="144.99999999999997" y="79.0">edu.unl.cse.csce361.boggle.logic.GameBoard</node>
+    <node x="0.0" y="79.0">edu.unl.cse.csce361.boggle.logic.BoggleUtils</node>
+    <node x="442.0" y="79.0">edu.unl.cse.csce361.boggle.logic.Solver</node>
+    <node x="249.99999999999997" y="168.0">edu.unl.cse.csce361.boggle.logic.GameManager</node>
+    <node x="276.0" y="79.0">edu.unl.cse.csce361.boggle.backend.BackendManager</node>
+    <node x="211.49999999999997" y="247.0">edu.unl.cse.csce361.boggle.frontend.BoggleScreenController</node>
+    <node x="269.0" y="0.0">edu.unl.cse.csce361.boggle.backend.DictionaryLoader</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.unl.cse.csce361.boggle.logic.GameManager" target="edu.unl.cse.csce361.boggle.logic.GameBoard">
+      <point x="-17.85714285714286" y="-14.5" />
+      <point x="294.6428571428571" y="128.0" />
+      <point x="228.24999999999997" y="128.0" />
+      <point x="27.75" y="14.5" />
+    </edge>
+    <edge source="edu.unl.cse.csce361.boggle.logic.GameManager" target="edu.unl.cse.csce361.boggle.logic.BoggleUtils">
+      <point x="-53.571428571428584" y="-14.5" />
+      <point x="258.9285714285714" y="148.0" />
+      <point x="62.5" y="148.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="edu.unl.cse.csce361.boggle.logic.GameManager" target="edu.unl.cse.csce361.boggle.backend.BackendManager">
+      <point x="0.0" y="-14.5" />
+      <point x="-36.5" y="14.5" />
+    </edge>
+    <edge source="edu.unl.cse.csce361.boggle.frontend.BoggleScreenController" target="edu.unl.cse.csce361.boggle.logic.GameManager">
+      <point x="-50.5" y="-14.5" />
+      <point x="262.0" y="222.0" />
+      <point x="281.25" y="222.0" />
+      <point x="-31.25" y="14.5" />
+    </edge>
+    <edge source="edu.unl.cse.csce361.boggle.logic.GameManager" target="edu.unl.cse.csce361.boggle.logic.Solver">
+      <point x="35.71428571428572" y="-14.5" />
+      <point x="348.21428571428567" y="138.0" />
+      <point x="464.5" y="138.0" />
+      <point x="-22.5" y="14.5" />
+    </edge>
+    <edge source="edu.unl.cse.csce361.boggle.backend.BackendManager" target="edu.unl.cse.csce361.boggle.backend.DictionaryLoader">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="266.0" y="161.0" />
+  <SelectedNodes>
+    <node>edu.unl.cse.csce361.boggle.frontend.Main</node>
+  </SelectedNodes>
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
