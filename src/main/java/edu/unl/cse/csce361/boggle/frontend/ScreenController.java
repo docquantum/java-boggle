@@ -44,32 +44,32 @@ public class ScreenController {
 
     @FXML
     public void singlePlay (Event event) throws IOException {
-        switchScreen(event, "SinglePlayerScreen.fxml");
+        switchScreen(event, "FXML/SinglePlayerScreen.fxml");
     }
 
     @FXML
     public void endPlay (Event event) throws IOException {
-        switchScreen(event, "EndScreen.fxml");
+        switchScreen(event, "FXML/EndScreen.fxml");
     }
 
     @FXML
     public void multiPlay (Event event) throws IOException {
-        switchScreen(event, "ConnectAsScreen.fxml");
+        switchScreen(event, "FXML/ConnectAsScreen.fxml");
     }
 
     @FXML
     public void connectAsHostPlay (Event event) throws IOException {
-        switchScreen(event, "HostConnectingScreen.fxml");
+        switchScreen(event, "FXML/HostConnectingScreen.fxml");
     }
 
     @FXML
     public void connectAsClientPlay (Event event) throws IOException {
-        switchScreen(event, "ClientConnectingScreen.fxml");
+        switchScreen(event, "FXML/ClientConnectingScreen.fxml");
     }
 
     @FXML
     public void newPlay (Event event) throws IOException {
-        switchScreen(event, "GameTypeScreen.fxml");
+        switchScreen(event, "FXML/GameTypeScreen.fxml");
     }
 
     @FXML
@@ -80,7 +80,7 @@ public class ScreenController {
     public void gamePlay (Event event) throws IOException {
         String playerName = PlayerName.getText();
         manage.setPlayerName(playerName);
-        switchScreen(event, "BoggleScreen.fxml");
+        switchScreen(event, "FXML/BoggleScreen.fxml");
     }
 
     @FXML
