@@ -27,17 +27,17 @@
          </font>
       </Label>
       <TextField fx:id="PlayerName" layoutX="220.0" layoutY="104.0" prefHeight="27.0" prefWidth="159.0" />
-      <Label layoutX="247.0" layoutY="158.0" text="Your I.P Address">
+      <Label layoutX="247.0" layoutY="162.0" text="Your I.P Address">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
-      <Label layoutX="201.0" layoutY="233.0" text="Enter The Port You Want To Use">
+      <Label layoutX="210.0" layoutY="233.0" text="Enter The Number Of Players">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
       <TextField layoutX="220.0" layoutY="259.0" prefHeight="27.0" prefWidth="159.0" />
-      <TextField layoutX="220.0" layoutY="178.0" prefHeight="27.0" prefWidth="159.0" />
+      <Label layoutX="268.0" layoutY="184.0" text="I.P Address" />
    </children>
 </AnchorPane>

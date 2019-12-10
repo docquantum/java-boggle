@@ -69,7 +69,7 @@ public class BoggleScreenController implements Initializable {
     private Label playname;
     @FXML
     private Label timer;
-    private int time = 10;
+    private int time = 180;
     private ArrayList<String> playerInputs = new ArrayList<String>();
 
     @Override
@@ -110,7 +110,7 @@ public class BoggleScreenController implements Initializable {
         Timeline timeline = new Timeline(new KeyFrame(
                 Duration.seconds(1),
                 ae -> changeTimer()));
-        timeline.setCycleCount(10);
+        timeline.setCycleCount(180);
         timeline.setOnFinished(event -> canChange());
         timeline.play();
     }

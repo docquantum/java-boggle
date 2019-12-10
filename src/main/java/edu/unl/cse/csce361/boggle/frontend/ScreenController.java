@@ -54,12 +54,17 @@ public class ScreenController {
 
     @FXML
     public void multiPlay (Event event) throws IOException {
-        switchScreen(event, "ConnectScreen.fxml");
+        switchScreen(event, "ConnectAsScreen.fxml");
     }
 
     @FXML
-    public void connectPlay (Event event) throws IOException {
-        switchScreen(event, "MultiPlayerConnectingScreen.fxml");
+    public void connectAsHostPlay (Event event) throws IOException {
+        switchScreen(event, "HostConnectingScreen.fxml");
+    }
+
+    @FXML
+    public void connectAsClientPlay (Event event) throws IOException {
+        switchScreen(event, "ClientConnectingScreen.fxml");
     }
 
     @FXML

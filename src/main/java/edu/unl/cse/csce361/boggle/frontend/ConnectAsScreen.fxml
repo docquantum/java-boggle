@@ -14,8 +14,8 @@
             <Font name="Comic Sans MS" size="24.0" />
          </font>
       </Text>
-      <Button fx:id="Client" layoutX="247.0" layoutY="235.0" mnemonicParsing="false" onAction="#connectPlay" prefHeight="46.0" prefWidth="106.0" text="Client" />
-      <Button fx:id="Host" layoutX="247.0" layoutY="151.0" mnemonicParsing="false" onAction="#connectPlay" prefHeight="46.0" prefWidth="106.0" text="Host" />
+      <Button fx:id="Client" layoutX="247.0" layoutY="235.0" mnemonicParsing="false" onAction="#connectAsClientPlay" prefHeight="46.0" prefWidth="106.0" text="Client" />
+      <Button fx:id="Host" layoutX="247.0" layoutY="151.0" mnemonicParsing="false" onAction="#connectAsHostPlay" prefHeight="46.0" prefWidth="106.0" text="Host" />
       <Text layoutX="179.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" text="What Are You Connecting As?" wrappingWidth="240.149169921875">
          <font>
             <Font size="18.0" />
