@@ -10,6 +10,7 @@ public class GameManager {
 	private static BackendManager bm;
 	private static GameManager uniqueInstance = null;
 	private String gameBoard[][];
+	private String PlayerName;
 
 	private GameManager(){
 		board = GameBoard.getInstance();
@@ -28,6 +29,18 @@ public class GameManager {
 		answer.setDic(bm.loadDictionary());
 		answer.entireSequenceFinder(board);		
 		return answer.words;
+	}
+
+	public String getPlayerName(){
+        return PlayerName;
+    }
+
+    public void playerName(String Name){
+		PlayerName = Name;
+	}
+
+	public void getPlayerInput(ArrayList<String> playerInput){
+		boolean present = playerInput.contains("yellow");
 	}
 
 	//gets the game board
