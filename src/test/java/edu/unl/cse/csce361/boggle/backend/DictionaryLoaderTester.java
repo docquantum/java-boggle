@@ -3,9 +3,7 @@ package edu.unl.cse.csce361.boggle.backend;
 import org.junit.Test;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
@@ -30,12 +28,12 @@ public class DictionaryLoaderTester {
         String directory = "src/test/data/files";
         List<Path> filePaths = DictionaryLoader.getFilePathsInDir(directory);
 
-        List<String> expectedLines = new ArrayList<>();
+        Set<String> expectedLines = new HashSet<>();
 
         expectedLines.addAll(Arrays.stream(new String[]{"This", "Has", "some", "words", "one", "too", "Duplicate"})
-                .collect(Collectors.toList()));
+                .map(String::toLowerCase).collect(Collectors.toSet()));
 
-        List<String> actualLines = DictionaryLoader.getLinesInFiles(filePaths);
+        Set<String> actualLines = DictionaryLoader.getLinesInFiles(filePaths);
 
         assertTrue(expectedLines.containsAll(actualLines));
 

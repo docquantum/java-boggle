@@ -5,8 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class DictionaryLoader {
@@ -45,16 +45,16 @@ public class DictionaryLoader {
      * @param fileList
      * @return
      */
-    public static List<String> getLinesInFiles(List<Path> fileList){
-        List<String> lines = new ArrayList<>();
+    public static  Set<String> getLinesInFiles(List<Path> fileList){
+        Set<String> lines = new HashSet<>();
         for (Path filePath : fileList) {
-            List<String> fileLines;
+            Set<String> fileLines;
             try {
                 fileLines = Files.lines(filePath)
                         .map(String::strip)
                         .filter(str -> str.length() > 2)
-                        .sorted().distinct()
-                        .collect(Collectors.toList());
+                        .map(String::toLowerCase)
+                        .collect(Collectors.toSet());
             } catch (IOException e){
                 System.err.println("IO Failure: " + e.getLocalizedMessage());
                 return null;
@@ -62,10 +62,6 @@ public class DictionaryLoader {
             lines.addAll(fileLines);
         }
 
-        // Remove duplicates and empty
-        lines = lines.stream()
-                .sorted().distinct()
-                .collect(Collectors.toList());
         return lines;
     }
 
