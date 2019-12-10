@@ -1,19 +1,23 @@
 package edu.unl.cse.csce361.boggle.backend.network;
 
+import edu.unl.cse.csce361.boggle.logic.GameBoard;
+import edu.unl.cse.csce361.boggle.logic.GameManager;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class BoggleClient implements Runnable{
+    private final String debugName = "Client";
     private ObjectInputStream inStream;
     private ObjectOutputStream outStream;
     private Socket socket;
     private Thread sendData;
     private Thread getData;
     private Thread selfThread;
-    private Queue<DataCodes> codeQueue;
-    public String player; // TODO: Only used for testing, remove very soon
+    private Queue<OpCode> codeQueue;
     private boolean running;
 
     public BoggleClient(String ip, int port) throws IOException {
@@ -25,19 +29,19 @@ public class BoggleClient implements Runnable{
     }
 
     public void stopClient() throws IOException, InterruptedException {
-        System.out.println("Stopping client");
+        NetworkUtils.debugPrint(debugName,"Stopping client");
         running = false;
-        synchronized (sendData){
-            sendData.notify();
+        synchronized (selfThread){
+            selfThread.notify();
         }
-//        inStream.close();
-//        outStream.close();
+        inStream.close();
+        outStream.close();
         socket.close();
         sendData.join();
         getData.join();
     }
 
-    public synchronized void queueData(DataCodes code){
+    public synchronized void sendDataToServer(OpCode code){
         codeQueue.add(code);
         synchronized (sendData){
             sendData.notify();
@@ -47,7 +51,7 @@ public class BoggleClient implements Runnable{
     @Override
     public void run() {
         this.selfThread = Thread.currentThread();
-        System.out.println("[Client " + Thread.currentThread().getName() + "] Client connected to " + socket);
+        NetworkUtils.debugPrint(debugName, "Client connected to " + socket);
         /**
          * Implements the server/client threads to get and pass
          * info to clients
@@ -62,43 +66,46 @@ public class BoggleClient implements Runnable{
             public void run() {
                 while (running) {
                     try {
-                        System.out.println("[Client " + Thread.currentThread().getName() + "] Waiting for input...");
-                        DataCodes code = (DataCodes) inStream.readObject();
-                        System.out.println("[Client " + Thread.currentThread().getName() + "] recieved " + code.toString());
+                        NetworkUtils.debugPrint(debugName, "Waiting for input...");
+                        OpCode code = (OpCode) inStream.readObject();
+                        NetworkUtils.debugPrint(debugName, "received " + code.toString());
                         switch (code) {
                             case PLAYER_NAME:
-                                System.out.println("Client asked to send name");
-                                queueData(DataCodes.PLAYER_NAME);
-                                break;
-                            case ALL_PLAYERS:
+                                // Server asked for player name
+                                sendDataToServer(OpCode.PLAYER_NAME);
                                 break;
                             case GAME_BOARD:
-                                System.out.println("Client got gameboard");
-//                                GameBoard.getInstance().setGameBoard((String[][]) inStream.readObject());
-                                String[][] board = (String[][]) inStream.readObject();
-                                //Arrays.stream(board).forEach(System.out::println);
+                                // Server is sending game board
+                                String[][] serverBoard = (String[][]) inStream.readObject();
+                                //TODO GameManager.getInstance().setGameBoard(serverBoard);
+
+                                break;
+                            case START_GAME:
+                                //TODO GameManager.getInstance().startGame();
+                                break;
+                            case FINISHED:
+                                //TODO GameManager.getInstance().endGame();
                                 break;
                             case WORD_LIST:
+                                sendDataToServer(OpCode.WORD_LIST);
                                 break;
                             case ALL_SCORES:
-                                break;
-                            case SCORE:
+                                Map<String, Integer> scores = ((Map<String, Integer>) inStream.readObject());
+                                // figure out what to do with the scores.
                                 break;
                             case EXIT:
-                                running = false;
-                                synchronized (selfThread){
-                                    selfThread.notify();
-                                }
+                                stopClient();
                                 break;
                             default:
                                 break;
                         }
-                    } catch (IOException | ClassNotFoundException e) {
-                        e.printStackTrace();
-                        running = false;
-                        synchronized (selfThread){
-                            selfThread.notify();
+                    } catch (IOException e){
+                        if(running){
+                            e.printStackTrace();
                         }
+                        NetworkUtils.debugPrint(debugName, "Connection Closed");
+                    } catch(ClassNotFoundException | InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -111,38 +118,51 @@ public class BoggleClient implements Runnable{
             @Override
             public void run() {
                 while (running) {
-                    try {
-                        // waiting until woken
-                        System.out.println("[Client " + Thread.currentThread().getName() + "] Waiting until woken...");
-                        synchronized (Thread.currentThread()){
-                            Thread.currentThread().wait();
+                    if(codeQueue.isEmpty()) {
+                        try {
+                            // waiting until woken
+                            NetworkUtils.debugPrint(debugName, "Waiting until woken...");
+                            synchronized (Thread.currentThread()) {
+                                Thread.currentThread().wait();
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                     if (!running) {
                         break;
                     }
                     try {
-                        System.out.println("[Client " + Thread.currentThread().getName() + "] Got pinged for " + codeQueue.peek());
+                        NetworkUtils.debugPrint(debugName, "Got pinged for " + codeQueue.peek());
                         switch (codeQueue.poll()) {
                             case PLAYER_NAME:
-                                outStream.writeObject(DataCodes.PLAYER_NAME);
-                                outStream.writeObject(player);
-                                break;
-                            case ALL_PLAYERS:
+                                // Send player name to server
+                                //TODO outStream.writeObject(GameManager.getInstance().getPlayerName());
+                                outStream.writeObject("Default Test");
                                 break;
                             case GAME_BOARD:
-                                // It's the client, no functionality
+                                // Ask server for board
+                                outStream.writeObject(OpCode.GAME_BOARD);
+                                break;
+                            case START_GAME:
+                                // Tell server client has started game
+                                outStream.writeObject(OpCode.START_GAME);
+                                break;
+                            case FINISHED:
+                                // Tell server client has finished and is waiting
+                                outStream.writeObject(OpCode.FINISHED);
                                 break;
                             case WORD_LIST:
+                                // Send server the words from the player
+                                //TODO outStream.writeObject(GameManager.getInstance().getPlayerWords());
                                 break;
                             case ALL_SCORES:
-                                break;
-                            case SCORE:
+                                // Ask server to get all scores
+                                outStream.writeObject(OpCode.ALL_SCORES);
                                 break;
                             case EXIT:
-                                outStream.writeUTF(DataCodes.EXIT.toString());
+                                // Tell server that client is exiting
+                                outStream.writeUTF(OpCode.EXIT.toString());
                                 break;
                             default:
                                 break;
@@ -165,7 +185,7 @@ public class BoggleClient implements Runnable{
             e.printStackTrace();
         }
 
-        System.out.println("[Client " + Thread.currentThread().getName() + "] Closing: " + socket);
+        NetworkUtils.debugPrint(debugName, "Closing: " + socket);
 
         try {
             stopClient();

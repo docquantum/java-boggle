@@ -1,7 +1,6 @@
 package edu.unl.cse.csce361.boggle.backend.network;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 import static java.lang.Thread.sleep;
 
@@ -43,15 +42,11 @@ public class networkMain {
         System.out.println(server.getAddress());
 
         sleep(100);
-        server.sendDataToAllClients(DataCodes.GAME_BOARD);
+        server.sendDataToAllClients(OpCode.GAME_BOARD);
         //sleep(100);
-        client.player = "Player 1";
-        client2.player = "Player 2";
-        client3.player = "Player 3";
-        client4.player = "Player 4";
-        server.sendDataToAllClients(DataCodes.PLAYER_NAME);
+        server.sendDataToAllClients(OpCode.PLAYER_NAME);
         //sleep(100);
-        server.sendDataToAllClients(DataCodes.EXIT);
+        server.sendDataToAllClients(OpCode.EXIT);
 
         try{
             System.out.println("[Main] joining Client 1");
