@@ -1,34 +1,49 @@
 package edu.unl.cse.csce361.boggle.backend;
 
-import edu.unl.cse.csce361.boggle.logic.GameManager;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static edu.unl.cse.csce361.boggle.backend.DictionaryLoader.getFilePathsInDir;
 import static edu.unl.cse.csce361.boggle.backend.DictionaryLoader.getLinesInFiles;
 
 public class BackendManager {
 
+    public final Set<String> dictionary;
 
-    private static BackendManager uniqueInstance = new BackendManager();
-    private BackendManager() {}
+    private static BackendManager uniqueInstance = null;
+    private BackendManager() {
+        this.dictionary = loadDictionary();
+    }
+
     public static BackendManager getInstance() {
+        if(uniqueInstance == null){
+            uniqueInstance = new BackendManager();
+        }
         return uniqueInstance;
     }
 
 
-    public List<String> returnDictionary(){
 
-        List<Path> path = new ArrayList<Path>();
-        List<String> dic = new ArrayList<String>();
+    public Set<String> getDictionary() {
+        return dictionary;
+    }
 
-        path = getFilePathsInDir("src/test/data/files");
+    public Set<String> loadDictionary(){
+
+        List<Path> path;
+        Set<String> dic;
+        path = getFilePathsInDir("src/main/resources/words/dicts");
 
         dic = getLinesInFiles(path);
 
         return dic;
+    }
+
+    public void setDictionary(String path){
+
+
     }
 
 }
