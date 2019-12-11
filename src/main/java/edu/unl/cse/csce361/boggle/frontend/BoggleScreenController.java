@@ -2,7 +2,6 @@ package edu.unl.cse.csce361.boggle.frontend;
 
 import edu.unl.cse.csce361.boggle.logic.GameManager;
 import javafx.animation.*;
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,21 +11,23 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.Timer;
+import java.util.*;
+
 import javafx.animation.KeyFrame;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ResourceBundle;
 
 public class BoggleScreenController implements Initializable {
 
+    private static BoggleScreenController uniqueInstance = null;
+    ScreenController sc = ScreenController.getInstance();
     GameManager manage = GameManager.getInstance();
     String[][] dice = manage.getBoard();
     String playerName = manage.getPlayerName();
 
+    @FXML
+    private Button results;
     @FXML
     private TextField playerInput1;
     @FXML
@@ -69,8 +70,14 @@ public class BoggleScreenController implements Initializable {
     private Label playname;
     @FXML
     private Label timer;
-    private int time = 180;
-    private ArrayList<String> playerInputs = new ArrayList<String>();
+    private int time = 10;
+
+    public static BoggleScreenController getInstance() {
+        if(uniqueInstance == null){
+            uniqueInstance = new BoggleScreenController();
+        }
+        return uniqueInstance;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -110,34 +117,43 @@ public class BoggleScreenController implements Initializable {
         Timeline timeline = new Timeline(new KeyFrame(
                 Duration.seconds(1),
                 ae -> changeTimer()));
-        timeline.setCycleCount(180);
-        timeline.setOnFinished(event -> canChange());
+        timeline.setCycleCount(10);
+        timeline.setOnFinished(event -> onTimerFinish());
         timeline.play();
     }
 
     public void changeTimer(){
         time--;
         timer.setText(time + " seconds");
-    }
-
-    public void canChange(){
         if(time == 0){
-            playerInput1.setEditable(false);
-            playerInput2.isDisable();
-            ObservableList<String> answers = wordViewer.getItems();
-            for(String elem: answers){
-                playerInputs.add(elem);
-            }
-            manage.setPlayerInput(playerInputs);
+            results.setVisible(true);
         }
     }
 
+    public void onTimerFinish(){
+        if(time == 0){
+            playerInput1.setDisable(true);
+            playerInput2.setDisable(true);
+            manage.setPlayerInput(wordViewer.getItems());
+        }
+    }
+
+    public List<String> getPlayerInputs() {
+        return wordViewer.getItems();
+    }
 
     @FXML
     public void submitWord (Event event) throws IOException {
-        if(!playerInput1.getText().isBlank()){
+        if(!playerInput1.getText().isBlank() && !wordViewer.getItems().contains(playerInput1.getText().isBlank())){
             wordViewer.getItems().add(playerInput1.getText().trim());
         }
         playerInput1.clear();
     }
+
+    @FXML
+    public void seeResults (Event event) throws IOException {
+        sc.endPlay(event);
+    }
+
+
 }
