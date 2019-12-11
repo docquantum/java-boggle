@@ -26,7 +26,18 @@ public class GameManager {
 		}
 		return uniqueInstance;
 	}
+	public void ready() {
 
+    }
+
+    public void startGame() {
+
+    }
+
+    public void endGame() {
+
+    }
+	
 	public Set<String> getAnswers(String board[][]) {
 		answer.setDic(bm.getDictionary());
 		answer.entireSequenceFinder(board);		
@@ -42,7 +53,7 @@ public class GameManager {
 	}
 
 	public void setPlayerInput(ArrayList<String> playerInput){
-		playerInput=playerWordInput;
+	    playerWordInput = playerInput;
 	}
 
 	//gets the game board
