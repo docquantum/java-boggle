@@ -66,6 +66,9 @@ public class BoggleClient implements Runnable{
             public void run() {
                 while (running) {
                     try {
+                        if(running){
+                            break;
+                        }
                         NetworkUtils.debugPrint(debugName, "Waiting for input...");
                         OpCode code = (OpCode) inStream.readObject();
                         NetworkUtils.debugPrint(debugName, "received " + code.toString());
@@ -102,6 +105,7 @@ public class BoggleClient implements Runnable{
                     } catch (IOException e){
                         if(running){
                             e.printStackTrace();
+                            running = false;
                         }
                         NetworkUtils.debugPrint(debugName, "Connection Closed");
                     } catch(ClassNotFoundException | InterruptedException e) {
