@@ -12,21 +12,24 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.Timer;
+import java.util.*;
+
 import javafx.animation.KeyFrame;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ResourceBundle;
 
 public class BoggleScreenController implements Initializable {
 
+    private static BoggleScreenController uniqueInstance = null;
+    ScreenController sc = ScreenController.getInstance();
     GameManager manage = GameManager.getInstance();
     String[][] dice = manage.getBoard();
     String playerName = manage.getPlayerName();
 
+    @FXML
+    private Button results;
     @FXML
     private TextField playerInput1;
     @FXML
@@ -69,8 +72,15 @@ public class BoggleScreenController implements Initializable {
     private Label playname;
     @FXML
     private Label timer;
-    private int time = 180;
-    private ArrayList<String> playerInputs = new ArrayList<String>();
+    private int time = 10;
+    private List<String> playerInputs = new ArrayList<>();
+
+    public static BoggleScreenController getInstance() {
+        if(uniqueInstance == null){
+            uniqueInstance = new BoggleScreenController();
+        }
+        return uniqueInstance;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -110,7 +120,7 @@ public class BoggleScreenController implements Initializable {
         Timeline timeline = new Timeline(new KeyFrame(
                 Duration.seconds(1),
                 ae -> changeTimer()));
-        timeline.setCycleCount(180);
+        timeline.setCycleCount(10);
         timeline.setOnFinished(event -> canChange());
         timeline.play();
     }
@@ -118,12 +128,15 @@ public class BoggleScreenController implements Initializable {
     public void changeTimer(){
         time--;
         timer.setText(time + " seconds");
+        if(time == 0){
+            results.setVisible(true);
+        }
     }
 
     public void canChange(){
         if(time == 0){
-            playerInput1.setEditable(false);
-            playerInput2.isDisable();
+            playerInput1.setDisable(true);
+            playerInput2.setDisable(true);
             ObservableList<String> answers = wordViewer.getItems();
             for(String elem: answers){
                 playerInputs.add(elem);
@@ -132,6 +145,15 @@ public class BoggleScreenController implements Initializable {
         }
     }
 
+    public Set<String> getAnswers(){
+
+        Set<String> answers = manage.getAnswers(dice);
+        return answers;
+    }
+
+    public List<String> getPlayerInputs() {
+        return playerInputs;
+    }
 
     @FXML
     public void submitWord (Event event) throws IOException {
@@ -140,4 +162,12 @@ public class BoggleScreenController implements Initializable {
         }
         playerInput1.clear();
     }
+
+    @FXML
+    public void seeResults (Event event) throws IOException {
+
+        sc.endPlay(event);
+    }
+
+
 }

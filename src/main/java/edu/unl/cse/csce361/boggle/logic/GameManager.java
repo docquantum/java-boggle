@@ -4,6 +4,7 @@ import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.backend.DictionaryLoader;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameManager {
 	private Solver answer;
@@ -12,7 +13,7 @@ public class GameManager {
 	private static GameManager uniqueInstance = null;
 	private String gameBoard[][];
 	private String PlayerName;
-	private ArrayList<String> playerWordInput = new ArrayList<String>();
+	private List<String> playerWordInput = new ArrayList<>();
 
 	private GameManager(){
 		board = GameBoard.getInstance();
@@ -52,7 +53,7 @@ public class GameManager {
 		PlayerName = Name;
 	}
 
-	public void setPlayerInput(ArrayList<String> playerInput){
+	public void setPlayerInput(List<String> playerInput){
 	    playerWordInput = playerInput;
 	}
 
@@ -68,8 +69,8 @@ public class GameManager {
 	}
 
 	//gets the score for singlePlayer
-	public int getScores(Set<String> singlePlayer){
-	    return BoggleUtils.calculateScore(bm.getDictionary(), singlePlayer);
+	public int getScores(){
+	    return BoggleUtils.calculateScore(getAnswers(getBoard()), playerWordInput.stream().collect(Collectors.toSet()));
 	}
 
 	//Save for Sprint 2
