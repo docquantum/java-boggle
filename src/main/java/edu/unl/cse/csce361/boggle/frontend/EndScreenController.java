@@ -31,7 +31,6 @@ public class EndScreenController implements Initializable {
     }
 
     private void setPlayerScore(){
-
         Integer score = manage.getScores();
         PlayerScore.setText(score.toString());
     }

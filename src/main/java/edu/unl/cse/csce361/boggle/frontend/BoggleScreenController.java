@@ -70,7 +70,9 @@ public class BoggleScreenController implements Initializable {
     private Label playname;
     @FXML
     private Label timer;
-    private int time = 10;
+    @FXML
+    private Label totalScore;
+    private int time = 180;
 
     public static BoggleScreenController getInstance() {
         if(uniqueInstance == null){
@@ -117,7 +119,7 @@ public class BoggleScreenController implements Initializable {
         Timeline timeline = new Timeline(new KeyFrame(
                 Duration.seconds(1),
                 ae -> changeTimer()));
-        timeline.setCycleCount(10);
+        timeline.setCycleCount(180);
         timeline.setOnFinished(event -> onTimerFinish());
         timeline.play();
     }

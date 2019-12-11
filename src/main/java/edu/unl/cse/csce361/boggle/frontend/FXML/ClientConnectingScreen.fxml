@@ -16,7 +16,7 @@
             <Font name="Comic Sans MS" size="24.0" />
          </font>
       </Text>
-      <Button layoutX="239.0" layoutY="265.0" mnemonicParsing="false" onAction="#gamePlay" prefHeight="42.0" prefWidth="114.0" text="Start Game">
+      <Button layoutX="239.0" layoutY="265.0" mnemonicParsing="false" onAction="#gamePlayClient" prefHeight="42.0" prefWidth="114.0" text="Start Game">
          <font>
             <Font size="14.0" />
          </font>
@@ -32,6 +32,8 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <TextField layoutX="217.0" layoutY="187.0" prefHeight="27.0" prefWidth="159.0" />
+      <TextField fx:id="ipAddress" layoutX="217.0" layoutY="187.0" prefHeight="27.0" prefWidth="159.0" />
+      <Label fx:id="nameErrorClient" layoutX="241.0" layoutY="130.0" text="Please Enter A Name" textFill="RED" visible="false" />
+      <Label fx:id="IPAddressError" layoutX="223.0" layoutY="214.0" text="Please Enter The IP Address" textFill="RED" visible="false" />
    </children>
 </AnchorPane>
