@@ -72,7 +72,7 @@ public class BoggleScreenController implements Initializable {
     private Label playname;
     @FXML
     private Label timer;
-    private int time = 180;
+    private int time = 10;
     private List<String> playerInputs = new ArrayList<>();
 
     public static BoggleScreenController getInstance() {
@@ -120,7 +120,7 @@ public class BoggleScreenController implements Initializable {
         Timeline timeline = new Timeline(new KeyFrame(
                 Duration.seconds(1),
                 ae -> changeTimer()));
-        timeline.setCycleCount(180);
+        timeline.setCycleCount(10);
         timeline.setOnFinished(event -> canChange());
         timeline.play();
     }
@@ -135,8 +135,8 @@ public class BoggleScreenController implements Initializable {
 
     public void canChange(){
         if(time == 0){
-            playerInput1.setEditable(false);
-            playerInput2.isDisable();
+            playerInput1.setDisable(true);
+            playerInput2.setDisable(true);
             ObservableList<String> answers = wordViewer.getItems();
             for(String elem: answers){
                 playerInputs.add(elem);
