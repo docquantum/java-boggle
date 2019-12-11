@@ -27,6 +27,7 @@
       <Label fx:id="playname" layoutX="14.0" layoutY="22.0" text="Player Name" />
       <Label layoutX="14.0" layoutY="67.0" text="Total Score" />
       <Label layoutX="94.0" layoutY="67.0" text="0" />
+      <Button fx:id="results" layoutX="120.0" layoutY="364.0" mnemonicParsing="false" onAction="#seeResults" visible="false" text="See Results" textAlignment="CENTER" />
       <GridPane alignment="CENTER" gridLinesVisible="true" layoutX="42.0" layoutY="103.0" maxHeight="250.0" maxWidth="250.0" minHeight="250.0" minWidth="250.0" prefHeight="250.0" prefWidth="250.0">
         <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="62.5" minWidth="62.5" prefWidth="62.5" />

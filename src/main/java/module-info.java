@@ -1,4 +1,4 @@
-module Boggle {
+module boggle {
     requires javafx.controls;
     requires javafx.fxml;
 
