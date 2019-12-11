@@ -2,7 +2,6 @@ package edu.unl.cse.csce361.boggle.frontend;
 
 import edu.unl.cse.csce361.boggle.logic.GameManager;
 import javafx.animation.*;
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,7 +14,6 @@ import javafx.util.Duration;
 import java.util.*;
 
 import javafx.animation.KeyFrame;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -73,7 +71,6 @@ public class BoggleScreenController implements Initializable {
     @FXML
     private Label timer;
     private int time = 10;
-    private List<String> playerInputs = new ArrayList<>();
 
     public static BoggleScreenController getInstance() {
         if(uniqueInstance == null){
@@ -121,7 +118,7 @@ public class BoggleScreenController implements Initializable {
                 Duration.seconds(1),
                 ae -> changeTimer()));
         timeline.setCycleCount(10);
-        timeline.setOnFinished(event -> canChange());
+        timeline.setOnFinished(event -> onTimerFinish());
         timeline.play();
     }
 
@@ -133,31 +130,21 @@ public class BoggleScreenController implements Initializable {
         }
     }
 
-    public void canChange(){
+    public void onTimerFinish(){
         if(time == 0){
             playerInput1.setDisable(true);
             playerInput2.setDisable(true);
-            ObservableList<String> answers = wordViewer.getItems();
-            for(String elem: answers){
-                playerInputs.add(elem);
-            }
-            manage.setPlayerInput(playerInputs);
+            manage.setPlayerInput(wordViewer.getItems());
         }
     }
 
-    public Set<String> getAnswers(){
-
-        Set<String> answers = manage.getAnswers(dice);
-        return answers;
-    }
-
     public List<String> getPlayerInputs() {
-        return playerInputs;
+        return wordViewer.getItems();
     }
 
     @FXML
     public void submitWord (Event event) throws IOException {
-        if(!playerInput1.getText().isBlank()){
+        if(!playerInput1.getText().isBlank() && !wordViewer.getItems().contains(playerInput1.getText().isBlank())){
             wordViewer.getItems().add(playerInput1.getText().trim());
         }
         playerInput1.clear();
@@ -165,7 +152,6 @@ public class BoggleScreenController implements Initializable {
 
     @FXML
     public void seeResults (Event event) throws IOException {
-
         sc.endPlay(event);
     }
 

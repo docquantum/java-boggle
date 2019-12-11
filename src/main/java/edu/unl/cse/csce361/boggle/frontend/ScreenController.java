@@ -45,6 +45,12 @@ public class ScreenController {
     @FXML
     public void singlePlay (Event event) throws IOException {
         switchScreen(event, "FXML/SinglePlayerScreen.fxml");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                manage.cacheAnswers();
+            }
+        }).start();
     }
 
     @FXML
@@ -69,6 +75,7 @@ public class ScreenController {
 
     @FXML
     public void newPlay (Event event) throws IOException {
+        manage.genNewBoard();
         switchScreen(event, "FXML/GameTypeScreen.fxml");
     }
 
