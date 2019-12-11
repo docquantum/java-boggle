@@ -23,6 +23,7 @@
       <ListView fx:id="wordViewer" layoutX="362.0" layoutY="75.0" prefHeight="270.0" prefWidth="227.0" />
       <TextField fx:id="playerInput1" layoutX="362.0" layoutY="345.0" onAction="#submitWord" />
       <Button fx:id="playerInput2" layoutX="511.0" layoutY="345.0" mnemonicParsing="false" onAction="#submitWord" prefHeight="26.0" prefWidth="79.0" text="Submit" />
+       <Button fx:id="results" layoutX="110.0" layoutY="345.0" mnemonicParsing="false" onAction="#seeResults" prefHeight="26.0" prefWidth="90.0" text="See Results" visible="false"/>
       <Label fx:id="timer" layoutX="520.0" layoutY="22.0" text="180 seconds" />
       <Label fx:id="playname" layoutX="40.0" layoutY="22.0" text="Player Name" />
       <Label layoutX="9.0" layoutY="66.0" text="Total Score:" />
