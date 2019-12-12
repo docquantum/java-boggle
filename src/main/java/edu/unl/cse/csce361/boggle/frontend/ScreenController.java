@@ -60,6 +60,8 @@ public class ScreenController {
     private Label portErrorLabel;
     @FXML
     private Label spinner;
+    @FXML
+    private Button clientStartGameButt;
 
 
     @FXML
@@ -104,10 +106,6 @@ public class ScreenController {
     public void newPlay (Event event) throws IOException {
         manage.genNewBoard();
         switchScreen(event, "FXML/GameTypeScreen.fxml");
-    }
-
-    @FXML
-    public void submitName(){
     }
 
     @FXML
@@ -191,6 +189,43 @@ public class ScreenController {
 
             //switchScreen(event, "FXML/BoggleScreen.fxml");
         }
+    }
+
+    public void clientTryName(Event event){
+        nameError.setVisible(false);
+        clientStartGameButt.setDisable(true);
+        String playerName = playerNameField.getText();
+        if(playerName.trim().isBlank()){
+            nameError.setText("Please enter a name");
+            nameError.setVisible(true);
+            clientStartGameButt.setDisable(false);
+        } else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String error = BackendManager.getInstance().sendPlayerName(playerName);
+                    if(!error.isBlank()){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                nameError.setText(error);
+                                nameError.setVisible(true);
+                                clientStartGameButt.setDisable(false);
+                            }
+                        });
+                    } else{
+                        manage.setPlayerName(playerName);
+                        try {
+                            switchScreen(event, "FXML/ClientWaitScreen.fxml");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+
+        }
+
     }
 
     private void spinWaitAnimate(){
