@@ -1,5 +1,6 @@
 package edu.unl.cse.csce361.boggle.frontend;
 
+import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.logic.GameBoard;
 import edu.unl.cse.csce361.boggle.logic.GameManager;
 import javafx.application.Application;
@@ -11,14 +12,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.util.function.UnaryOperator;
 
 public class ScreenController {
 
@@ -135,8 +135,12 @@ public class ScreenController {
             multiNumPlayerError.setVisible(true);
         }
         else{
+            // TODO make player into its own class, create, set the GM player as that player obj
             manage.setPlayerName(playerName);
-            switchScreen(event, "FXML/BoggleScreen.fxml");
+            BackendManager.getInstance().setHostMode(true);
+            BackendManager.getInstance().setNumOfClients(Integer.parseInt(numberPlayers));
+            BackendManager.getInstance().startNetwork();
+            switchScreen(event, "FXML/HostWaitScreen.fxml");
         }
     }
 
@@ -144,9 +148,9 @@ public class ScreenController {
     public void gamePlayClient (Event event) throws IOException {
         String playerName = PlayerName.getText();
         String IPAddress = ipAddress.getText();
-        String PortNumber = portNumber.getText();
+        String port = portNumber.getText();
 
-        if(playerName.trim().isBlank() && IPAddress.trim().isBlank() && PortNumber.trim().isBlank()){
+        if(playerName.trim().isBlank() && IPAddress.trim().isBlank() && port.trim().isBlank()){
             nameErrorClient.setVisible(true);
             IPAddressError.setVisible(true);
             portNumLabel.setVisible(true);
@@ -157,13 +161,24 @@ public class ScreenController {
         else if(IPAddress.trim().isBlank()){
             IPAddressError.setVisible(true);
         }
-        else if(PortNumber.trim().isBlank()){
+        else if(port.trim().isBlank()){
             portNumLabel.setVisible(true);
         }
         else{
-            manage.setPlayerName(playerName);
-            switchScreen(event, "FXML/BoggleScreen.fxml");
+            BackendManager.getInstance().setAddress(IPAddress);
+            BackendManager.getInstance().setPort(Integer.parseInt(port));
+            BackendManager.getInstance().startNetwork();
+            //manage.setPlayerName(playerName);
+
+            //switchScreen(event, "FXML/BoggleScreen.fxml");
         }
+    }
+
+    private String makePartialIPRegex() {
+        String partialBlock = "(([01]?[0-9]{0,2})|(2[0-4][0-9])|(25[0-5]))" ;
+        String subsequentPartialBlock = "(\\."+partialBlock+")" ;
+        String ipAddress = partialBlock+"?"+subsequentPartialBlock+"{0,3}";
+        return "^"+ipAddress ;
     }
 
     @FXML

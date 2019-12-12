@@ -2,6 +2,10 @@ package edu.unl.cse.csce361.boggle.backend;
 
 import edu.unl.cse.csce361.boggle.backend.network.BoggleClient;
 import edu.unl.cse.csce361.boggle.backend.network.BoggleServer;
+import edu.unl.cse.csce361.boggle.backend.network.OpCode;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -28,6 +32,7 @@ public class BackendManager {
     private int port = -1;
     // Singleton
     private static BackendManager uniqueInstance = null;
+    private BooleanProperty allConnected = new SimpleBooleanProperty();
 
     private BackendManager() {
         this.dictionary = loadDictionary();
@@ -89,7 +94,13 @@ public class BackendManager {
         this.port = port;
     }
 
+    public void sendPlayerName(){};
+
     // Server Comm
+    public void setNumOfClients(int numOfClients){
+        this.numOfClients = numOfClients;
+    }
+
     public String getAddress(){
         if(!this.serverThread.isAlive()){
             System.err.println("Server not ready!");
@@ -105,6 +116,15 @@ public class BackendManager {
         }
         return this.server.getPort();
     }
+
+    public BooleanProperty getAllConnectedProperty(){
+        return this.server.getAllConnectedProperty();
+    }
+
+    public void hostStartGame(){
+        this.server.sendDataToAllClients(OpCode.START_GAME);
+    }
+
 
     // Dictionary tools
     public Set<String> getDictionary() {

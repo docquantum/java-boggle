@@ -1,5 +1,8 @@
 package edu.unl.cse.csce361.boggle.backend.network;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 import java.io.*;
 import java.net.*;
 import java.util.Vector;
@@ -14,7 +17,7 @@ public class BoggleServer implements Runnable {
     Vector<ClientHandler> clients;
     private final int numOfClients;
     private boolean serverRunning;
-    private boolean allConnected;
+    private BooleanProperty allConnected;
 
     /**
      * Builds a new server, will bind to any available port on the system.
@@ -38,6 +41,7 @@ public class BoggleServer implements Runnable {
         this.clients = new Vector<>(numOfClients);
         this.runningThreads = new Vector<>(numOfClients);
         this.finishedThreads = new Vector<>(numOfClients);
+        this.allConnected = new SimpleBooleanProperty();
     }
 
     public void stopServer(){
@@ -106,6 +110,10 @@ public class BoggleServer implements Runnable {
         return this.socket.getLocalPort();
     }
 
+    public BooleanProperty getAllConnectedProperty(){
+        return this.allConnected;
+    }
+
     /**
      * Allows for upper level functions to send data to a client. Used by host to get info
      * from a client or to notify them of changes.
@@ -163,9 +171,9 @@ public class BoggleServer implements Runnable {
             // If all clients have connected, wait to start cleanup
             if(this.runningThreads.size() == this.numOfClients){
                 // Wait till all connect
-                while(!allConnected){
+                while(!allConnected.get()){
                     if(numOfClients == clients.stream().filter(clientHandler -> clientHandler.isConnected()).count()){
-                        allConnected = true;
+                        allConnected.setValue(true);
                         break;
                     }
                     try {
