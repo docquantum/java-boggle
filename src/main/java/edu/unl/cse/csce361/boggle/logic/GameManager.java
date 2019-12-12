@@ -16,6 +16,12 @@ public class GameManager {
 	private Set<String> answers;
 
 	private GameManager(){
+		Comparator<String> c = new Comparator<String>() {
+			@Override
+			public int compare(String s, String t1) {
+				return 0;
+			}
+		};
 		board = GameBoard.getInstance();
 		bm = BackendManager.getInstance();
 		solver = new Solver();

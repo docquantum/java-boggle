@@ -30,6 +30,10 @@ public class ClientHandler implements Runnable {
         this.codeQueue = new PriorityQueue<>();
     }
 
+    public boolean isConnected(){
+        return this.socket.isConnected();
+    }
+
     public void stopHandler() throws InterruptedException, IOException {
         NetworkUtils.debugPrint(debugName,"Closing...");
         handlerRunning = false;
