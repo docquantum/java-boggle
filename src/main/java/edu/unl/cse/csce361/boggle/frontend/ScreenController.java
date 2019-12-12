@@ -39,11 +39,13 @@ public class ScreenController {
     @FXML
     private TextField ipAddress;
     @FXML
-    private Label PlayerScore;
+    private ListView multiScoreList;
     @FXML
     private Button Host;
     @FXML
     private Button Client;
+    @FXML
+    private Label PlayerScore;
     @FXML
     private Label nameError;
     @FXML
@@ -54,6 +56,10 @@ public class ScreenController {
     private Label IPAddressError;
     @FXML
     private Label nameErrorClient;
+    @FXML
+    private Label portNumber;
+    @FXML
+    private Label IPAddress;
 
 
     @FXML

@@ -33,7 +33,7 @@
          </font>
       </Label>
       <TextField fx:id="numPlayer" layoutX="220.0" layoutY="225.0" prefHeight="27.0" prefWidth="159.0" />
-      <Label fx:id="multiNameError" layoutX="224.0" layoutY="131.0" text="Please Enter A Player Name" textAlignment="CENTER" textFill="RED" visible="false" />
-      <Label fx:id="multiNumPlayerError" layoutX="205.0" layoutY="286.0" text="Please Enter The Number Of Players" textAlignment="CENTER" textFill="RED" visible="false" />
+      <Label fx:id="multiNameError" layoutX="227.0" layoutY="179.0" text="Please Enter A Player Name" textAlignment="CENTER" textFill="RED" visible="false" />
+      <Label fx:id="multiNumPlayerError" layoutX="205.0" layoutY="252.0" text="Please Enter The Number Of Players" textAlignment="CENTER" textFill="RED" visible="false" />
    </children>
 </AnchorPane>
