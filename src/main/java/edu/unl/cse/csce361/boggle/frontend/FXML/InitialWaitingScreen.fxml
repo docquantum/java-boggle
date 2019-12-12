@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.unl.cse.csce361.boggle.frontend.EndScreenController">
+   <children>
+      <Line endX="499.29290771484375" endY="7.62939453125E-6" layoutX="101.0" layoutY="56.0" startX="-100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      <Text layoutX="264.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Boggle" textAlignment="CENTER">
+         <font>
+            <Font name="Comic Sans MS" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="254.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="I.P. Address">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Text>
+      <Label fx:id="IPAdress" layoutX="264.0" layoutY="126.0" text="123.456.7890" />
+      <Text layoutX="249.0" layoutY="186.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port Number">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Text>
+      <Label fx:id="portNumber" layoutX="295.0" layoutY="191.0" text="6" />
+      <Text layoutX="184.0" layoutY="271.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting For Other Players to Connect">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>
