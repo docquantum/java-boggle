@@ -25,7 +25,7 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="PlayerName" layoutX="220.0" layoutY="154.0" prefHeight="27.0" prefWidth="159.0" />
+      <TextField fx:id="playerNameField" layoutX="220.0" layoutY="154.0" prefHeight="27.0" prefWidth="159.0" />
       <Label fx:id="nameError" layoutX="254.0" layoutY="186.0" text="Please Enter A Name" textAlignment="CENTER" textFill="#cd0909" visible="false">
          <font>
             <Font size="10.0" />

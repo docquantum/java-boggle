@@ -26,7 +26,7 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="PlayerName" layoutX="220.0" layoutY="152.0" prefHeight="27.0" prefWidth="159.0" />
+      <TextField fx:id="playerNameField" layoutX="220.0" layoutY="152.0" prefHeight="27.0" prefWidth="159.0" />
       <Label layoutX="210.0" layoutY="204.0" text="Enter The Number Of Players">
          <font>
             <Font size="14.0" />

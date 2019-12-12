@@ -1,24 +1,24 @@
 package edu.unl.cse.csce361.boggle.frontend;
 
 import edu.unl.cse.csce361.boggle.backend.BackendManager;
-import edu.unl.cse.csce361.boggle.logic.GameBoard;
+import edu.unl.cse.csce361.boggle.backend.network.NetworkUtils;
 import edu.unl.cse.csce361.boggle.logic.GameManager;
-import javafx.application.Application;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.util.function.UnaryOperator;
 
 public class ScreenController {
 
@@ -33,13 +33,13 @@ public class ScreenController {
     }
 
     @FXML
-    private TextField PlayerName;
+    private TextField playerNameField;
     @FXML
     private TextField numPlayer;
     @FXML
-    private TextField ipAddress;
+    private TextField ipAddressField;
     @FXML
-    private TextField portNumber;
+    private TextField portField;
     @FXML
     private ListView multiScoreList;
     @FXML
@@ -55,13 +55,11 @@ public class ScreenController {
     @FXML
     private Label multiNumPlayerError;
     @FXML
-    private Label IPAddressError;
+    private Label ipErrorLabel;
     @FXML
-    private Label nameErrorClient;
+    private Label portErrorLabel;
     @FXML
-    private Label IPAddress;
-    @FXML
-    private Label portNumLabel;
+    private Label spinner;
 
 
     @FXML
@@ -114,7 +112,7 @@ public class ScreenController {
 
     @FXML
     public void gamePlay (Event event) throws IOException {
-        String playerName = PlayerName.getText();
+        String playerName = this.playerNameField.getText();
         if(playerName.trim().isBlank()){
             nameError.setVisible(true);
         } else{
@@ -125,7 +123,7 @@ public class ScreenController {
 
     @FXML
     public void gamePlayHost (Event event) throws IOException {
-        String playerName = PlayerName.getText();
+        String playerName = this.playerNameField.getText();
         String numberPlayers = numPlayer.getText();
 
         if(playerName.trim().isBlank()){
@@ -146,39 +144,64 @@ public class ScreenController {
 
     @FXML
     public void gamePlayClient (Event event) throws IOException {
-        String playerName = PlayerName.getText();
-        String IPAddress = ipAddress.getText();
-        String port = portNumber.getText();
+        String ipAddress = ipAddressField.getText();
+        String port = portField.getText();
 
-        if(playerName.trim().isBlank() && IPAddress.trim().isBlank() && port.trim().isBlank()){
-            nameErrorClient.setVisible(true);
-            IPAddressError.setVisible(true);
-            portNumLabel.setVisible(true);
+        if(!ipAddress.trim().matches(NetworkUtils.IPV4_REGEX) && !port.trim().matches(NetworkUtils.PORT_REGEX)) {
+            ipErrorLabel.setVisible(true);
+            portErrorLabel.setVisible(true);
         }
-        else if(playerName.trim().isBlank()){
-            nameErrorClient.setVisible(true);
+        else if(!ipAddress.trim().matches(NetworkUtils.IPV4_REGEX)){
+            portErrorLabel.setVisible(false);
+            ipErrorLabel.setVisible(true);
         }
-        else if(IPAddress.trim().isBlank()){
-            IPAddressError.setVisible(true);
-        }
-        else if(port.trim().isBlank()){
-            portNumLabel.setVisible(true);
+        else if(!port.trim().matches(NetworkUtils.PORT_REGEX)){
+            ipErrorLabel.setVisible(false);
+            portErrorLabel.setVisible(true);
         }
         else{
-            BackendManager.getInstance().setAddress(IPAddress);
+            ((Button) event.getSource()).setDisable(true);
+            ipErrorLabel.setVisible(false);
+            portErrorLabel.setVisible(false);
+            BackendManager.getInstance().setAddress(ipAddress);
             BackendManager.getInstance().setPort(Integer.parseInt(port));
-            BackendManager.getInstance().startNetwork();
-            //manage.setPlayerName(playerName);
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.seconds(1),
+                    ae -> spinWaitAnimate()));
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String error = BackendManager.getInstance().startNetwork();
+                    if(!error.isEmpty()){
+                        timeline.stop();
+                        spinner.setText(error);
+                        spinner.setTextFill(Color.FIREBRICK);
+                        spinner.setFont(Font.font("Arial", 14));
+                        ((Button) event.getSource()).setDisable(false);
+                    }
+
+                }
+            }).start();
 
             //switchScreen(event, "FXML/BoggleScreen.fxml");
         }
     }
 
-    private String makePartialIPRegex() {
-        String partialBlock = "(([01]?[0-9]{0,2})|(2[0-4][0-9])|(25[0-5]))" ;
-        String subsequentPartialBlock = "(\\."+partialBlock+")" ;
+    private void spinWaitAnimate(){
+        if(spinner.getText().equals("")) spinner.setText(".");
+        else if(spinner.getText().equals(".")) spinner.setText("..");
+        else if(spinner.getText().equals("..")) spinner.setText("...");
+        else if(spinner.getText().equals("...")) spinner.setText("");
+    }
+
+    private boolean validateIP(String ip) {
+        String partialBlock = "(([01]?[0-9]{0,2})|(2[0-4][0-9])|(25[0-5]))";
+        String subsequentPartialBlock = "(\\."+partialBlock+")";
         String ipAddress = partialBlock+"?"+subsequentPartialBlock+"{0,3}";
-        return "^"+ipAddress ;
+        String reg = "^"+ipAddress;
+        return ip.matches(reg);
     }
 
     @FXML

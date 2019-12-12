@@ -53,36 +53,33 @@ public class BackendManager {
         return this.isHost;
     }
 
-    public void startNetwork() throws IOException {
+    public String startNetwork() {
         if(isHost){
             // make sure clients is defined
             if(numOfClients == 0){
-                System.err.println("Number of clients is 0.");
-                return;
+                return "Number of clients is 0.";
             }
             try {
                 this.server = new BoggleServer(numOfClients);
             } catch (IOException e) {
-                System.err.println("Server failed to start: " + e.getMessage());
-                return;
+                return "Server failed to start: " + e.getMessage();
             }
             serverThread = new Thread(this.server);
             serverThread.start();
         } else {
             // make sure address and port are set before starting connection
             if(address == null || port == -1){
-                System.err.println("IP or Port not set!");
-                return;
+                return "IP or Port not set!";
             }
             try{
                 this.client = new BoggleClient(address, port);
             } catch (IOException e){
-                System.err.println("Client connection failed to start: " + e.getMessage());
-                return;
+                return "Client connection failed to start: " + e.getMessage();
             }
             clientThread = new Thread(this.client);
             clientThread.start();
         }
+        return "";
     }
 
     // Client Comm
