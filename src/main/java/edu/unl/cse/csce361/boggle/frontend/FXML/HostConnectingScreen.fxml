@@ -16,7 +16,7 @@
             <Font name="Comic Sans MS" size="24.0" />
          </font>
       </Text>
-      <Button layoutX="239.0" layoutY="265.0" mnemonicParsing="false" onAction="#gamePlay" prefHeight="42.0" prefWidth="114.0" text="Start Game">
+      <Button layoutX="240.0" layoutY="322.0" mnemonicParsing="false" onAction="#gamePlayHost" prefHeight="42.0" prefWidth="114.0" text="Start Game">
          <font>
             <Font size="14.0" />
          </font>
@@ -27,11 +27,19 @@
          </font>
       </Label>
       <TextField fx:id="PlayerName" layoutX="220.0" layoutY="104.0" prefHeight="27.0" prefWidth="159.0" />
-      <Label layoutX="231.0" layoutY="166.0" text="Enter The I.P Address">
+      <Label layoutX="247.0" layoutY="165.0" text="Your I.P Address">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
-      <TextField layoutX="217.0" layoutY="187.0" prefHeight="27.0" prefWidth="159.0" />
+      <Label layoutX="210.0" layoutY="233.0" text="Enter The Number Of Players">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="numPlayer" layoutX="220.0" layoutY="259.0" prefHeight="27.0" prefWidth="159.0" />
+      <Label layoutX="268.0" layoutY="187.0" text="I.P Address" />
+      <Label fx:id="multiNameError" layoutX="224.0" layoutY="131.0" text="Please Enter A Player Name" textAlignment="CENTER" textFill="RED" visible="false" />
+      <Label fx:id="multiNumPlayerError" layoutX="205.0" layoutY="286.0" text="Please Enter The Number Of Players" textAlignment="CENTER" textFill="RED" visible="false" />
    </children>
 </AnchorPane>

@@ -10,7 +10,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("GameTypeScreen.fxml"));
+        var url = getClass().getResource("FXML/GameTypeScreen.fxml");
+        Parent root = FXMLLoader.load(url);
         primaryStage.setTitle("Boggle");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();

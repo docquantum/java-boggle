@@ -35,41 +35,62 @@ public class ScreenController {
     @FXML
     private TextField PlayerName;
     @FXML
+    private TextField numPlayer;
+    @FXML
+    private TextField ipAddress;
+    @FXML
     private Label PlayerScore;
     @FXML
     private Button Host;
     @FXML
     private Button Client;
+    @FXML
+    private Label nameError;
+    @FXML
+    private Label multiNameError;
+    @FXML
+    private Label multiNumPlayerError;
+    @FXML
+    private Label IPAddressError;
+    @FXML
+    private Label nameErrorClient;
 
 
     @FXML
     public void singlePlay (Event event) throws IOException {
-        switchScreen(event, "SinglePlayerScreen.fxml");
+        switchScreen(event, "FXML/SinglePlayerScreen.fxml");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                manage.cacheAnswers();
+            }
+        }).start();
     }
 
     @FXML
     public void endPlay (Event event) throws IOException {
-        switchScreen(event, "EndScreen.fxml");
+        switchScreen(event, "FXML/EndScreen.fxml");
     }
 
     @FXML
     public void multiPlay (Event event) throws IOException {
-        switchScreen(event, "ConnectAsScreen.fxml");
+        switchScreen(event, "FXML/ConnectAsScreen.fxml");
     }
 
     @FXML
     public void connectAsHostPlay (Event event) throws IOException {
-        switchScreen(event, "HostConnectingScreen.fxml");
+        switchScreen(event, "FXML/HostConnectingScreen.fxml");
     }
 
     @FXML
     public void connectAsClientPlay (Event event) throws IOException {
-        switchScreen(event, "ClientConnectingScreen.fxml");
+        switchScreen(event, "FXML/ClientConnectingScreen.fxml");
     }
 
     @FXML
     public void newPlay (Event event) throws IOException {
-        switchScreen(event, "GameTypeScreen.fxml");
+        manage.genNewBoard();
+        switchScreen(event, "FXML/GameTypeScreen.fxml");
     }
 
     @FXML
@@ -79,8 +100,46 @@ public class ScreenController {
     @FXML
     public void gamePlay (Event event) throws IOException {
         String playerName = PlayerName.getText();
-        manage.playerName(playerName);
-        switchScreen(event, "BoggleScreen.fxml");
+        if(playerName.trim().isBlank()){
+            nameError.setVisible(true);
+        } else{
+            manage.setPlayerName(playerName);
+            switchScreen(event, "FXML/BoggleScreen.fxml");
+        }
+    }
+
+    @FXML
+    public void gamePlayHost (Event event) throws IOException {
+        String playerName = PlayerName.getText();
+        String numberPlayers = numPlayer.getText();
+
+        if(playerName.trim().isBlank()){
+            multiNameError.setVisible(true);
+        }
+        else if( numberPlayers.trim().isBlank()){
+            multiNumPlayerError.setVisible(true);
+        }
+        else{
+            manage.setPlayerName(playerName);
+            switchScreen(event, "FXML/BoggleScreen.fxml");
+        }
+    }
+
+    @FXML
+    public void gamePlayClient (Event event) throws IOException {
+        String playerName = PlayerName.getText();
+        String IPAddress = ipAddress.getText();
+
+        if(playerName.trim().isBlank()){
+            nameErrorClient.setVisible(true);
+        }
+        else if(IPAddress.trim().isBlank()){
+            IPAddressError.setVisible(true);
+        }
+        else{
+            manage.setPlayerName(playerName);
+            switchScreen(event, "FXML/BoggleScreen.fxml");
+        }
     }
 
     @FXML

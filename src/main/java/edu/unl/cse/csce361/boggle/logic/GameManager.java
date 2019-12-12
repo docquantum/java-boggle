@@ -3,19 +3,22 @@ package edu.unl.cse.csce361.boggle.logic;
 import edu.unl.cse.csce361.boggle.backend.BackendManager;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameManager {
-	private Solver answer;
+	private Solver solver;
 	private static GameBoard board;
 	private static BackendManager bm;
 	private static GameManager uniqueInstance = null;
 	private String gameBoard[][];
-	private String PlayerName;
+	private String playerName;
+	private List<String> playerWordInput = new ArrayList<>();
+	private Set<String> answers;
 
 	private GameManager(){
 		board = GameBoard.getInstance();
 		bm = BackendManager.getInstance();
-		answer = new Solver();
+		solver = new Solver();
 	}
 
 	public static GameManager getInstance() {
@@ -24,23 +27,42 @@ public class GameManager {
 		}
 		return uniqueInstance;
 	}
+	public void ready() {
+
+    }
+
+    public void startGame() {
+
+    }
+
+    public void endGame() {
+
+    }
 
 	public Set<String> getAnswers(String board[][]) {
-		answer.setDic(bm.loadDictionary());
-		answer.entireSequenceFinder(board);		
-		return answer.words;
+		solver.setDic(bm.getDictionary());
+		solver.entireSequenceFinder(board);
+		return solver.words;
+	}
+
+	/**
+	 * Gets the solutions for the current board. Should be done concurrently with the player playing, etc
+	 * so that things run smooth and fast.
+	 */
+	public void cacheAnswers(){
+		this.answers = getAnswers(getBoard());
 	}
 
 	public String getPlayerName(){
-        return PlayerName;
+        return playerName;
     }
 
-    public void playerName(String Name){
-		PlayerName = Name;
+    public void setPlayerName(String name){
+		this.playerName = name;
 	}
 
-	public void getPlayerInput(ArrayList<String> playerInput){
-		boolean present = playerInput.contains("yellow");
+	public void setPlayerInput(List<String> playerInput){
+	    playerWordInput = playerInput;
 	}
 
 	//gets the game board
@@ -49,14 +71,13 @@ public class GameManager {
 	}
 
 	//makes a new game-board
-	public String[][] getNewBoard(){
+	public void genNewBoard(){
 		board.generateGameBoard();
-		return board.getGameBoard();
 	}
 
 	//gets the score for singlePlayer
-	public int getScores(Set<String> singlePlayer){
-	    return BoggleUtils.calculateScore(bm.getDictionary(), singlePlayer);
+	public int getScores(){
+	    return BoggleUtils.calculateScore(this.answers, playerWordInput.stream().collect(Collectors.toSet()));
 	}
 
 	//Save for Sprint 2
