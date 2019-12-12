@@ -1,13 +1,8 @@
 package edu.unl.cse.csce361.boggle.frontend;
 
 import edu.unl.cse.csce361.boggle.backend.BackendManager;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,8 +20,8 @@ public class HostWaitScreenController implements Initializable {
     private Label portNumber;
     @FXML
     private Button startGameButt;
-
-
+    @FXML
+    private Label waitingLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -36,11 +31,11 @@ public class HostWaitScreenController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldBool, Boolean newBool) {
                 if(newBool){
+                    waitingLabel.setVisible(false);
                     startGameButt.setVisible(true);
                 }
             }
         });
-
     }
 
     public void startGame(Event event) throws IOException {

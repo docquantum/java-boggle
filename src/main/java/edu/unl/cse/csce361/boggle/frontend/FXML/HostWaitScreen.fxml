@@ -60,7 +60,7 @@
             </Label>
          </children>
       </VBox>
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting For Other Players to Connect" GridPane.rowIndex="3">
+      <Text fx:id="waitingLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting For Other Players to Connect" GridPane.rowIndex="3">
          <font>
             <Font size="14.0" />
          </font>
