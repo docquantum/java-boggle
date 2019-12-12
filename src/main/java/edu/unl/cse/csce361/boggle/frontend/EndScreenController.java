@@ -27,11 +27,12 @@ public class EndScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setPlayerScore();
+        if(manage.getMode() == 1) {
+            setPlayerScore();
+        }
     }
 
     private void setPlayerScore(){
-
         Integer score = manage.getScores();
         PlayerScore.setText(score.toString());
     }

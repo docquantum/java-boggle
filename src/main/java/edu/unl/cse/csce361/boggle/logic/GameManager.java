@@ -14,6 +14,7 @@ public class GameManager {
 	private String playerName;
 	private List<String> playerWordInput = new ArrayList<>();
 	private Set<String> answers;
+	private int Mode = 2;               //1 is single player 2 is multi player
 
 	private GameManager(){
 		board = GameBoard.getInstance();
@@ -78,6 +79,13 @@ public class GameManager {
 	//gets the score for singlePlayer
 	public int getScores(){
 	    return BoggleUtils.calculateScore(this.answers, playerWordInput.stream().collect(Collectors.toSet()));
+	}
+
+	public  void setMode(int mode){
+		Mode = mode;
+	}
+	public int getMode(){
+		return Mode;
 	}
 
 	//Save for Sprint 2

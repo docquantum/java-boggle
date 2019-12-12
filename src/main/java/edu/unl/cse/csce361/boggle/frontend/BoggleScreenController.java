@@ -70,6 +70,8 @@ public class BoggleScreenController implements Initializable {
     private Label playname;
     @FXML
     private Label timer;
+    @FXML
+    private Label totalScore;
     private int time = 10;
 
     public static BoggleScreenController getInstance() {
@@ -154,6 +156,7 @@ public class BoggleScreenController implements Initializable {
     public void seeResults (Event event) throws IOException {
         sc.endPlay(event);
     }
+
 
 
 }
