@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.io.IOException;
@@ -22,6 +23,8 @@ public class HostWaitScreenController implements Initializable {
     private Label IPAddress;
     @FXML
     private Label portNumber;
+    @FXML
+    private Button startGameButt;
 
 
 
@@ -33,11 +36,7 @@ public class HostWaitScreenController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldBool, Boolean newBool) {
                 if(newBool){
-                    try {
-                        startGame(new Event(Event.ANY));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    startGameButt.setVisible(true);
                 }
             }
         });
