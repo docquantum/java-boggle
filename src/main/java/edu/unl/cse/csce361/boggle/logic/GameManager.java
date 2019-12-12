@@ -77,6 +77,10 @@ public class GameManager {
 		board.generateGameBoard();
 	}
 
+	public void setGameBoard(String[][] gameBoard){
+		board.setGameBoard(gameBoard);
+	}
+
 	//gets the score for singlePlayer
 	public int getScores(){
 	    return BoggleUtils.calculateScore(this.answers, playerWordInput.stream().collect(Collectors.toSet()));

@@ -5,11 +5,9 @@ import edu.unl.cse.csce361.boggle.backend.network.BoggleServer;
 import edu.unl.cse.csce361.boggle.backend.network.OpCode;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableBooleanValue;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -91,7 +89,10 @@ public class BackendManager {
         this.port = port;
     }
 
-    public void sendPlayerName(){};
+    public String sendPlayerName(String playerName){
+        client.sendDataToServer(OpCode.PLAYER_NAME, playerName);
+        return playerName;
+    };
 
     // Server Comm
     public void setNumOfClients(int numOfClients){
