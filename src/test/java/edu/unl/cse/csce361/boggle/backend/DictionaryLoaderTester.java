@@ -12,7 +12,7 @@ public class DictionaryLoaderTester {
 
     @Test
     public void getFilePathsInDirTest(){
-        String directory = "src/test/data/files";
+        String directory = "src/test/data/files/dicLoadTest";
 
         List<Path> expectedPaths= new ArrayList<>();
         expectedPaths.add(Path.of(directory + "/file1.txt"));

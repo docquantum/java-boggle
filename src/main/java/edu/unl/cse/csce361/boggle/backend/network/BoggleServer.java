@@ -14,6 +14,7 @@ public class BoggleServer implements Runnable {
     Vector<ClientHandler> clients;
     private final int numOfClients;
     private boolean serverRunning;
+    private boolean allConnected;
 
     /**
      * Builds a new server, will bind to any available port on the system.
@@ -161,14 +162,28 @@ public class BoggleServer implements Runnable {
             }
             // If all clients have connected, wait to start cleanup
             if(this.runningThreads.size() == this.numOfClients){
+                // Wait till all connect
+                while(!allConnected){
+                    if(numOfClients == clients.stream().filter(clientHandler -> clientHandler.isConnected()).count()){
+                        allConnected = true;
+                        break;
+                    }
+                    try {
+                        sleep(500L);
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
 
+                // While the threads aren't finished, wait
                 while(this.finishedThreads.size() != this.numOfClients){
                     try {
-                        sleep(1000L);
+                        sleep(5000L);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
+                // Join the threads
                 try {
                     for (Thread finishedThread : finishedThreads) {
                         NetworkUtils.debugPrint(debugName, "Joining thread " + finishedThread.getName());
