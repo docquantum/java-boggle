@@ -175,14 +175,18 @@ public class ScreenController {
                 @Override
                 public void run() {
                     String error = BackendManager.getInstance().startNetwork();
-                    if(!error.isEmpty()){
-                        timeline.stop();
-                        spinner.setText(error);
-                        spinner.setTextFill(Color.FIREBRICK);
-                        spinner.setFont(Font.font("Arial", 14));
-                        ((Button) event.getSource()).setDisable(false);
-                    }
-
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(!error.isEmpty()){
+                                timeline.stop();
+                                spinner.setText(error);
+                                spinner.setTextFill(Color.FIREBRICK);
+                                spinner.setFont(Font.font("Arial", 14));
+                                ((Button) event.getSource()).setDisable(false);
+                            }
+                        }
+                    });
                 }
             }).start();
 
@@ -191,10 +195,11 @@ public class ScreenController {
     }
 
     private void spinWaitAnimate(){
-        if(spinner.getText().equals("")) spinner.setText(".");
-        else if(spinner.getText().equals(".")) spinner.setText("..");
-        else if(spinner.getText().equals("..")) spinner.setText("...");
-        else if(spinner.getText().equals("...")) spinner.setText("");
+        if(spinner.getText().equals("")) spinner.setText("Connecting");
+        if(spinner.getText().equals("Connecting")) spinner.setText("Connecting.");
+        else if(spinner.getText().equals("Connecting.")) spinner.setText("Connecting..");
+        else if(spinner.getText().equals("Connecting..")) spinner.setText("Connecting...");
+        else if(spinner.getText().equals("Connecting...")) spinner.setText("Connecting");
     }
 
     private boolean validateIP(String ip) {
