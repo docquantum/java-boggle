@@ -39,6 +39,8 @@ public class ScreenController {
     @FXML
     private TextField ipAddress;
     @FXML
+    private TextField portNumber;
+    @FXML
     private ListView multiScoreList;
     @FXML
     private Button Host;
@@ -57,13 +59,14 @@ public class ScreenController {
     @FXML
     private Label nameErrorClient;
     @FXML
-    private Label portNumber;
-    @FXML
     private Label IPAddress;
+    @FXML
+    private Label portNumLabel;
 
 
     @FXML
     public void singlePlay (Event event) throws IOException {
+        manage.setMode(1);
         switchScreen(event, "FXML/SinglePlayerScreen.fxml");
         new Thread(new Runnable() {
             @Override
@@ -75,11 +78,17 @@ public class ScreenController {
 
     @FXML
     public void endPlay (Event event) throws IOException {
-        switchScreen(event, "FXML/EndScreen.fxml");
+        if(manage.getMode() == 1) {
+            switchScreen(event, "FXML/EndScreen.fxml");
+        }
+        else if(manage.getMode() == 2){
+            switchScreen(event, "FXML/MultiScoreScreen.fxml");
+        }
     }
 
     @FXML
     public void multiPlay (Event event) throws IOException {
+        manage.setMode(2);
         switchScreen(event, "FXML/ConnectAsScreen.fxml");
     }
 
@@ -135,12 +144,21 @@ public class ScreenController {
     public void gamePlayClient (Event event) throws IOException {
         String playerName = PlayerName.getText();
         String IPAddress = ipAddress.getText();
+        String PortNumber = portNumber.getText();
 
-        if(playerName.trim().isBlank()){
+        if(playerName.trim().isBlank() && IPAddress.trim().isBlank() && PortNumber.trim().isBlank()){
+            nameErrorClient.setVisible(true);
+            IPAddressError.setVisible(true);
+            portNumLabel.setVisible(true);
+        }
+        else if(playerName.trim().isBlank()){
             nameErrorClient.setVisible(true);
         }
         else if(IPAddress.trim().isBlank()){
             IPAddressError.setVisible(true);
+        }
+        else if(PortNumber.trim().isBlank()){
+            portNumLabel.setVisible(true);
         }
         else{
             manage.setPlayerName(playerName);
