@@ -195,26 +195,16 @@ public class ScreenController {
 
     private void spinWaitAnimate(){
         if(spinner.getText().equals("")) spinner.setText("Connecting");
-        if(spinner.getText().equals("Connecting")) spinner.setText("Connecting.");
+        else if(spinner.getText().equals("Connecting")) spinner.setText("Connecting.");
         else if(spinner.getText().equals("Connecting.")) spinner.setText("Connecting..");
         else if(spinner.getText().equals("Connecting..")) spinner.setText("Connecting...");
         else if(spinner.getText().equals("Connecting...")) spinner.setText("Connecting");
-    }
-
-    private boolean validateIP(String ip) {
-        String partialBlock = "(([01]?[0-9]{0,2})|(2[0-4][0-9])|(25[0-5]))";
-        String subsequentPartialBlock = "(\\."+partialBlock+")";
-        String ipAddress = partialBlock+"?"+subsequentPartialBlock+"{0,3}";
-        String reg = "^"+ipAddress;
-        return ip.matches(reg);
     }
 
     @FXML
     public void exitGame (Event event) throws IOException {
         Platform.exit();
     }
-
-
 
     public void switchScreen(Event event, String ScreenName) throws IOException {
 
