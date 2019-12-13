@@ -212,30 +212,29 @@ public class ScreenController {
             nameError.setVisible(true);
             clientStartGameButt.setDisable(false);
         } else {
+            BackendManager.getInstance().getNameTakenProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observableValue, Number oldInt, Number newInt) {
+                    if(oldInt.intValue() < newInt.intValue()){
+                        nameError.setText("Name is taken, please try another");
+                        nameError.setVisible(true);
+                        clientStartGameButt.setDisable(false);
+                    } else if(oldInt.intValue() > newInt.intValue()){
+                        manage.setPlayerName(playerName);
+                        try {
+                            switchScreen(event, "FXML/BoggleScreen.fxml");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    BackendManager.getInstance().getNameTakenProperty().addListener(new ChangeListener<Number>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Number> observableValue, Number oldInt, Number newInt) {
-                            if(oldInt.intValue() < newInt.intValue()){
-                                nameError.setText("Name is taken, please try another");
-                                nameError.setVisible(true);
-                                clientStartGameButt.setDisable(false);
-                            } else if(oldInt.intValue() > newInt.intValue()){
-                                manage.setPlayerName(playerName);
-                                try {
-                                    switchScreen(event, "FXML/ClientWaitScreen.fxml");
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    });
                     BackendManager.getInstance().sendPlayerName(playerName);
                 }
             }).start();
-
         }
 
     }

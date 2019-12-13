@@ -67,10 +67,7 @@ public class BackendManager {
     }
 
     public void addPlayer(String playerName){
-
-        if(checkPlayer(playerName)){
-            this.playerNames.add(playerName);
-        }
+        this.playerNames.add(playerName);
     }
 
     public String startNetwork() {

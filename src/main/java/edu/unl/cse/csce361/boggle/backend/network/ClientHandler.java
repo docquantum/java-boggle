@@ -148,9 +148,7 @@ public class ClientHandler implements Runnable {
                             e.printStackTrace();
                         }
                     }
-                    if(!handlerRunning){
-                        break;
-                    }
+                    if(!handlerRunning) break;
                     try {
                         NetworkUtils.debugPrint(debugName, "Server sending " + dataQueue.peek().getKey());
                         switch (dataQueue.peek().getKey()) {

@@ -164,7 +164,6 @@ public class BoggleServer implements Runnable {
                 // Wait till all connect
                 while(!allReady.get()){
                     if(numOfClients == clients.stream().filter(clientHandler -> clientHandler.clientIsReady()).count()){
-                        sendDataToAllClients(OpCode.START_GAME, null);
                         allReady.setValue(true);
                         break;
                     }
