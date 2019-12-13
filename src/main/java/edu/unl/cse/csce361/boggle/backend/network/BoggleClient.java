@@ -71,16 +71,15 @@ public class BoggleClient implements Runnable{
                             break;
                         }
                         NetworkUtils.debugPrint(debugName, "Waiting for input...");
-                        OpCode code = (OpCode) inStream.readObject();
-                        NetworkUtils.debugPrint(debugName, "received " + code.toString());
-                        switch (code) {
+                        Pair<OpCode, Object> data = (Pair<OpCode, Object>) inStream.readObject();
+                        NetworkUtils.debugPrint(debugName, "received " + data.getKey().toString());
+                        switch (data.getKey()) {
                             case PLAYER_NAME:
                                 // Not sure yet
                                 break;
                             case GAME_BOARD:
                                 // Server is sending game board
-                                GameManager.getInstance().setGameBoard((String[][]) inStream.readObject());
-
+                                GameManager.getInstance().setGameBoard((String[][]) data.getValue());
                                 break;
                             case START_GAME:
                                 //TODO GameManager.getInstance().startGame();
@@ -92,8 +91,7 @@ public class BoggleClient implements Runnable{
                                 //TODO sendDataToServer(OpCode.WORD_LIST, GameManager.getInstance().getPlayerWords());
                                 break;
                             case ALL_SCORES:
-                                Map<String, Integer> scores = ((Map<String, Integer>) inStream.readObject());
-                                // figure out what to do with the scores.
+                                //TODO Figure out what to do with the scores
                                 break;
                             case EXIT:
                                 stopClient();
@@ -129,20 +127,20 @@ public class BoggleClient implements Runnable{
                                 Thread.currentThread().wait();
                             }
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            if(running) {
+                                e.printStackTrace();
+                                running = false;
+                            }
                         }
                     }
-                    if (!running) {
-                        break;
-                    }
+                    if (!running) break;
                     try {
                         NetworkUtils.debugPrint(debugName, "Got pinged for " + codeQueue.peek());
-                        Pair<OpCode, Object> data = codeQueue.poll();
-                        assert data != null;
-                        switch (data.getKey()) {
+
+                        switch (codeQueue.peek().getKey()) {
                             case PLAYER_NAME:
                                 // Send player name to server
-                                outStream.writeObject(data.getValue());
+                                outStream.writeObject(codeQueue.poll().getValue());
                                 break;
                             case GAME_BOARD:
                                 // Ask server for board

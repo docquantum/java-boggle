@@ -61,7 +61,6 @@ public class ScreenController {
     @FXML
     private Label spinner;
 
-
     @FXML
     public void singlePlay (Event event) throws IOException {
         manage.setMode(1);
