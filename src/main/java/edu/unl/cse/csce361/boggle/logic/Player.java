@@ -1,22 +1,32 @@
 package edu.unl.cse.csce361.boggle.logic;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
-    private ArrayList<String> words = new ArrayList<String>();
+    private List<String> words;
     private int playerScore;
     private String playerName;
     private int playerTotalScore;
-    
-    
-    
+
+    public Player(String name){
+        this.words = new ArrayList<>();
+        this.playerScore = 0;
+        this.playerName = name;
+        this.playerTotalScore = 0;
+    }
+
     public int getPlayerTotalScore() {
         return playerTotalScore;
     }
     
-    public void setPlayerTotalScore(int playerGameScore) {
+    public void addToPlayerTotalScore(int playerGameScore) {
         this.playerTotalScore = playerGameScore + playerTotalScore;
         this.playerScore = this.playerTotalScore;
+    }
+
+    public void setPlayerTotalScore(int totalScore){
+        this.playerTotalScore = totalScore;
     }
     
     public String getPlayerName() {
@@ -25,10 +35,10 @@ public class Player {
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
-    public ArrayList<String> getWords() {
+    public List<String> getWords() {
         return words;
     }
-    public void setWords(ArrayList<String> words) {
+    public void setWords(List<String> words) {
         this.words = words;
     }
     public int getPlayerScore() {
@@ -37,10 +47,5 @@ public class Player {
     public void setPlayerScore(int playerScore) {
         this.playerScore = playerScore;
     }
-    
-    
-    
-    
-    
-    
+
 }

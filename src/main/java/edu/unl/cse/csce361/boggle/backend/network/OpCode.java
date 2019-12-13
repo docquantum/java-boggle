@@ -55,7 +55,7 @@ public enum OpCode {
 
     /**
      * Client: Asks for all scores
-     * Server: Returns a list of all scores attached to players (maybe HashSet[name, score])
+     * Server: Returns a list of all players with scores
      */
     ALL_SCORES,
 

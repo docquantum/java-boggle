@@ -12,8 +12,9 @@ public class GameManager {
 	private static GameManager uniqueInstance = null;
 	private String gameBoard[][];
 	private String playerName;
-	private List<String> playerWordInput = new ArrayList<>();
+	private List<String> playerWordInput;
 	private Set<String> answers;
+	private Set<Player> players = new HashSet<>();
 	private int totalScore = 0;
 	private boolean isMultiplayer = false;
 
@@ -41,6 +42,14 @@ public class GameManager {
     public void endGame() {
 
     }
+
+    public Set<Player> getPlayers(){
+		return this.players;
+	}
+
+	public void addPlayer(String playerName){
+		this.players.add(new Player(playerName));
+	}
 
 	public Set<String> getAnswers(String board[][]) {
 		solver.setDic(bm.getDictionary());
@@ -116,7 +125,6 @@ public class GameManager {
 		return this.isMultiplayer;
 	}
 
-	//Save for Sprint 2
 	private int getScores(ArrayList<ArrayList<String>> Players){
 	    int scores = 0;
 	    return scores;

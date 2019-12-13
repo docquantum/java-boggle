@@ -3,6 +3,7 @@ package edu.unl.cse.csce361.boggle.backend;
 import edu.unl.cse.csce361.boggle.backend.network.BoggleClient;
 import edu.unl.cse.csce361.boggle.backend.network.BoggleServer;
 import edu.unl.cse.csce361.boggle.backend.network.OpCode;
+import edu.unl.cse.csce361.boggle.logic.GameManager;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -20,7 +21,6 @@ import static edu.unl.cse.csce361.boggle.backend.DictionaryLoader.getLinesInFile
 public class BackendManager {
 
     private Set<String> dictionary;
-    private Set<String> playerNames;
     // Determines server modality
     private boolean isHost = false;
     // Server mode
@@ -41,7 +41,6 @@ public class BackendManager {
 
     private BackendManager() {
         this.dictionary = loadDictionary();
-        this.playerNames = new HashSet<String>();
     }
 
     public static BackendManager getInstance() {
@@ -59,16 +58,19 @@ public class BackendManager {
         return this.isHost;
     }
 
+    /**
+     * Checks to see if the player is found
+     * @param playerName
+     * @return True if found, false if not
+     */
     public boolean checkPlayer(String playerName){
-        if(this.playerNames.contains(playerName)){
-            return true;
-        }else{
-            return false;
-        }
+      return GameManager.getInstance().getPlayers().stream()
+              .map(player -> player.getPlayerName())
+              .filter(s -> s.equals(playerName)).count() != 0;
     }
 
     public void addPlayer(String playerName){
-        this.playerNames.add(playerName);
+        GameManager.getInstance().addPlayer(playerName);
     }
 
     public String startNetwork() {
