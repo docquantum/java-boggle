@@ -2,6 +2,7 @@ package edu.unl.cse.csce361.boggle.backend.network;
 
 import edu.unl.cse.csce361.boggle.logic.GameBoard;
 import edu.unl.cse.csce361.boggle.logic.GameManager;
+import javafx.util.Pair;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,7 +18,7 @@ public class BoggleClient implements Runnable{
     private Thread sendData;
     private Thread getData;
     private Thread selfThread;
-    private Queue<OpCode> codeQueue;
+    private Queue<Pair<OpCode, Object>> codeQueue;
     private boolean running;
 
     public BoggleClient(String ip, int port) throws IOException {
@@ -41,8 +42,8 @@ public class BoggleClient implements Runnable{
         getData.join();
     }
 
-    public synchronized void sendDataToServer(OpCode code){
-        codeQueue.add(code);
+    public synchronized void sendDataToServer(OpCode code, Object data){
+        codeQueue.add(new Pair(code, data));
         synchronized (sendData){
             sendData.notify();
         }
@@ -74,13 +75,11 @@ public class BoggleClient implements Runnable{
                         NetworkUtils.debugPrint(debugName, "received " + code.toString());
                         switch (code) {
                             case PLAYER_NAME:
-                                // Server asked for player name
-                                sendDataToServer(OpCode.PLAYER_NAME);
+                                // Not sure yet
                                 break;
                             case GAME_BOARD:
                                 // Server is sending game board
-                                String[][] serverBoard = (String[][]) inStream.readObject();
-                                //TODO GameManager.getInstance().setGameBoard(serverBoard);
+                                GameManager.getInstance().setGameBoard((String[][]) inStream.readObject());
 
                                 break;
                             case START_GAME:
@@ -90,7 +89,7 @@ public class BoggleClient implements Runnable{
                                 //TODO GameManager.getInstance().endGame();
                                 break;
                             case WORD_LIST:
-                                sendDataToServer(OpCode.WORD_LIST);
+                                //TODO sendDataToServer(OpCode.WORD_LIST, GameManager.getInstance().getPlayerWords());
                                 break;
                             case ALL_SCORES:
                                 Map<String, Integer> scores = ((Map<String, Integer>) inStream.readObject());
@@ -138,11 +137,12 @@ public class BoggleClient implements Runnable{
                     }
                     try {
                         NetworkUtils.debugPrint(debugName, "Got pinged for " + codeQueue.peek());
-                        switch (codeQueue.poll()) {
+                        Pair<OpCode, Object> data = codeQueue.poll();
+                        assert data != null;
+                        switch (data.getKey()) {
                             case PLAYER_NAME:
                                 // Send player name to server
-                                //TODO outStream.writeObject(GameManager.getInstance().getPlayerName());
-                                outStream.writeObject("Default Test");
+                                outStream.writeObject(data.getValue());
                                 break;
                             case GAME_BOARD:
                                 // Ask server for board
