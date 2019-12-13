@@ -155,29 +155,26 @@ public class ScreenController {
                     ae -> spinWaitAnimate()));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    String error = BackendManager.getInstance().startNetwork();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(!error.isEmpty()){
-                                timeline.stop();
-                                spinner.setText(error);
-                                spinner.setTextFill(Color.FIREBRICK);
-                                ((Button) event.getSource()).setDisable(false);
-                            } else{
-                                try {
-                                    timeline.stop();
-                                    switchScreen(event, "FXML/ClientChooseNameScreen.fxml");
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
+            new Thread(() -> {
+                String error = BackendManager.getInstance().startNetwork();
+                Platform.runLater(() -> {
+                    if(!error.isEmpty()){
+                        timeline.stop();
+                        spinner.setText(error);
+                        spinner.setTextFill(Color.FIREBRICK);
+                        ((Button) event.getSource()).setDisable(false);
+                    } else{
+                        try {
+                            timeline.stop();
+                            new Thread(() -> {
+                                BackendManager.getInstance().getGameBoardFromServer();
+                            }).start();
+                            switchScreen(event, "FXML/ClientChooseNameScreen.fxml");
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    });
-                }
+                    }
+                });
             }).start();
 
             //switchScreen(event, "FXML/BoggleScreen.fxml");

@@ -109,6 +109,10 @@ public class BackendManager {
         this.port = port;
     }
 
+    public void getGameBoardFromServer(){
+        client.sendDataToServer(OpCode.GAME_BOARD, null);
+    }
+
     public void sendPlayerName(String playerName){
         client.sendDataToServer(OpCode.PLAYER_NAME, playerName);
     };
