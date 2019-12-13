@@ -4,6 +4,7 @@ import edu.unl.cse.csce361.boggle.backend.network.BoggleClient;
 import edu.unl.cse.csce361.boggle.backend.network.BoggleServer;
 import edu.unl.cse.csce361.boggle.backend.network.OpCode;
 import edu.unl.cse.csce361.boggle.logic.GameManager;
+import edu.unl.cse.csce361.boggle.logic.Player;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -118,6 +119,10 @@ public class BackendManager {
     public void sendPlayerName(String playerName){
         client.sendDataToServer(OpCode.PLAYER_NAME, playerName);
     };
+
+    public void sendPlayerObject(Player player) {
+        client.sendDataToServer(OpCode.WORD_LIST, player);
+    }
 
     public IntegerProperty getNameTakenProperty() {
         return nameTaken;

@@ -1,6 +1,7 @@
 package edu.unl.cse.csce361.boggle.logic;
 
 import edu.unl.cse.csce361.boggle.backend.BackendManager;
+import javafx.beans.property.BooleanProperty;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,11 +13,13 @@ public class GameManager {
 	private static GameManager uniqueInstance = null;
 	private String gameBoard[][];
 	private String playerName;
+	private Player localPlayer;
 	private List<String> playerWordInput;
 	private Set<String> answers;
 	private Set<Player> players = new HashSet<>();
 	private int totalScore = 0;
 	private boolean isMultiplayer = false;
+	private BooleanProperty gotAllScores;
 
 	private GameManager(){
 		board = GameBoard.getInstance();
@@ -31,24 +34,20 @@ public class GameManager {
 		return uniqueInstance;
 	}
 
-	public void ready() {
-
-    }
-
-    public void startGame() {
-
-    }
-
-    public void endGame() {
-
-    }
-
     public Set<Player> getPlayers(){
 		return this.players;
 	}
 
 	public void addPlayer(String playerName){
 		this.players.add(new Player(playerName));
+	}
+
+	public Player getLocalPlayer(){
+		return this.localPlayer;
+	}
+
+	public void setLocalPlayer(Player player){
+		this.localPlayer = player;
 	}
 
 	public Set<String> getAnswers(String board[][]) {
@@ -105,6 +104,11 @@ public class GameManager {
 	    return score;
 	}
 
+	public void calculateMultiPlayerScores(){
+		BoggleUtils.removeDupilicates(players);
+		BoggleUtils.calculateAllScores(this.answers, players);
+	}
+
 	public void addToTotalScore(int score){
 		this.totalScore += score;
 	}
@@ -123,10 +127,5 @@ public class GameManager {
 
 	public boolean isMultiplayer(){
 		return this.isMultiplayer;
-	}
-
-	private int getScores(ArrayList<ArrayList<String>> Players){
-	    int scores = 0;
-	    return scores;
 	}
 }

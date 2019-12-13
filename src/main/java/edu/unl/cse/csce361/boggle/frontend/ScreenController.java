@@ -198,7 +198,7 @@ public class ScreenController {
                     manage.setPlayerName(playerName);
                     Platform.runLater(() -> {
                         try {
-                            switchScreen(event, "FXML/ClientWaitScreen.fxml");
+                            switchScreen( "FXML/ClientWaitScreen.fxml");
                             BackendManager.getInstance().getAllReadyProperty().addListener((obsBool, oldBool, newBool) -> {
                                 if(newBool){
                                     Platform.runLater(() -> {
@@ -217,6 +217,14 @@ public class ScreenController {
                 }
             });
             new Thread(() -> BackendManager.getInstance().sendPlayerName(playerName)).start();
+        }
+
+    }
+
+    public void handleEndGame(){
+        if(!BackendManager.getInstance().getHostMode()){
+            BackendManager.getInstance().sendPlayerObject(GameManager.getInstance().getLocalPlayer());
+
         }
 
     }

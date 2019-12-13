@@ -17,6 +17,7 @@ import javafx.animation.KeyFrame;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.stream.Collectors;
 
 public class BoggleScreenController implements Initializable {
 
@@ -135,7 +136,11 @@ public class BoggleScreenController implements Initializable {
         if(time == 0){
             playerInput1.setDisable(true);
             playerInput2.setDisable(true);
-            manage.setPlayerInput(wordViewer.getItems());
+            if(manage.isMultiplayer()){
+                manage.getLocalPlayer().setWords(wordViewer.getItems().stream().collect(Collectors.toSet()));
+            } else {
+                manage.setPlayerInput(wordViewer.getItems());
+            }
             seeResults();
         }
     }
@@ -154,14 +159,19 @@ public class BoggleScreenController implements Initializable {
 
     @FXML
     public void seeResults () {
-        if (!manage.isMultiplayer()) {
+        if (manage.isMultiplayer()) {
             try {
-                sc.switchScreen("FXML/SinglePlayerEndScreen.fxml");
+                sc.switchScreen("FXML/ScoreWaitingScreen.fxml");
             } catch (IOException e){
                 e.printStackTrace();
             }
         } else {
-
+            try {
+                new Thread(() -> sc.handleEndGame()).start();
+                sc.switchScreen("FXML/SinglePlayerEndScreen.fxml");
+            } catch (IOException e){
+                e.printStackTrace();
+            }
         }
     }
 

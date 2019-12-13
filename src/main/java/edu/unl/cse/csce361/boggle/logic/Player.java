@@ -1,16 +1,18 @@
 package edu.unl.cse.csce361.boggle.logic;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Player {
-    private List<String> words;
+    private Set<String> words;
     private int playerScore;
     private String playerName;
     private int playerTotalScore;
 
     public Player(String name){
-        this.words = new ArrayList<>();
+        this.words = new HashSet<>();
         this.playerScore = 0;
         this.playerName = name;
         this.playerTotalScore = 0;
@@ -35,10 +37,10 @@ public class Player {
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
-    public List<String> getWords() {
+    public Set<String> getWords() {
         return words;
     }
-    public void setWords(List<String> words) {
+    public void setWords(Set<String> words) {
         this.words = words;
     }
     public int getPlayerScore() {
