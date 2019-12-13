@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +39,8 @@ public class BackendManager {
 
     private BackendManager() {
         this.dictionary = loadDictionary();
+        this.playerNames = new HashSet<String>();
+
     }
 
     public static BackendManager getInstance() {
