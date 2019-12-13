@@ -60,11 +60,11 @@
             </Label>
          </children>
       </VBox>
-      <Text fx:id="waitingLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting For Other Players to Connect" GridPane.rowIndex="3">
+      <Label fx:id="waitingLabel" text="Waiting For Other Players to Connect" GridPane.rowIndex="3">
          <font>
             <Font size="14.0" />
          </font>
-      </Text>
+      </Label>
       <Button fx:id="startGameButt" mnemonicParsing="false" onAction="#startGame" prefHeight="50.0" text="Start Game" visible="false" GridPane.rowIndex="3">
          <font>
             <Font name="Arial" size="16.0" />
