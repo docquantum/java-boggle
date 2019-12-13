@@ -6,6 +6,8 @@ import edu.unl.cse.csce361.boggle.logic.GameManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -213,26 +215,26 @@ public class ScreenController {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    String error = BackendManager.getInstance().sendPlayerName(playerName);
-                    if(!error.isBlank()){
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                nameError.setText(error);
+                    BackendManager.getInstance().getNameTakenProperty().addListener(new ChangeListener<Number>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Number> observableValue, Number oldInt, Number newInt) {
+                            if(oldInt.intValue() < newInt.intValue()){
+                                nameError.setText("Name is taken, please try another");
                                 nameError.setVisible(true);
                                 clientStartGameButt.setDisable(false);
+                            } else if(oldInt.intValue() > newInt.intValue()){
+                                manage.setPlayerName(playerName);
+                                try {
+                                    switchScreen(event, "FXML/ClientWaitScreen.fxml");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        });
-                    } else{
-                        manage.setPlayerName(playerName);
-                        try {
-                            switchScreen(event, "FXML/ClientWaitScreen.fxml");
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
-                    }
+                    });
+                    BackendManager.getInstance().sendPlayerName(playerName);
                 }
-            });
+            }).start();
 
         }
 

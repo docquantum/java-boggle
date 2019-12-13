@@ -1,13 +1,12 @@
 package edu.unl.cse.csce361.boggle.backend.network;
 
-import edu.unl.cse.csce361.boggle.logic.GameBoard;
+import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.logic.GameManager;
 import javafx.util.Pair;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class BoggleClient implements Runnable{
@@ -19,7 +18,7 @@ public class BoggleClient implements Runnable{
     private Thread getData;
     private Thread selfThread;
     private static BoggleClient self;
-    private Queue<Pair<OpCode, Object>> codeQueue;
+    private Queue<Pair<OpCode, Object>> dataQueue;
     private boolean running;
 
     public boolean isRunning() {
@@ -30,7 +29,7 @@ public class BoggleClient implements Runnable{
         this.socket = new Socket(ip, port);
         this.outStream = new ObjectOutputStream(this.socket.getOutputStream());
         this.inStream = new ObjectInputStream(this.socket.getInputStream());
-        this.codeQueue = new PriorityQueue<>();
+        this.dataQueue = new LinkedList<>();
         this.running = true;
         self = this;
     }
@@ -49,7 +48,7 @@ public class BoggleClient implements Runnable{
     }
 
     public synchronized void sendDataToServer(OpCode code, Object data){
-        codeQueue.add(new Pair(code, data));
+        dataQueue.add(new Pair<OpCode, Object>(code, data));
         synchronized (sendData){
             sendData.notify();
         }
@@ -76,10 +75,16 @@ public class BoggleClient implements Runnable{
                         if(!self.isRunning()) break;
                         NetworkUtils.debugPrint(debugName, "Waiting for input...");
                         Pair<OpCode, Object> data = (Pair<OpCode, Object>) inStream.readObject();
-                        NetworkUtils.debugPrint(debugName, "received " + data.getKey().toString());
+                        NetworkUtils.debugPrint(debugName, "received " + data.toString());
                         switch (data.getKey()) {
                             case PLAYER_NAME:
                                 sendDataToServer(OpCode.PLAYER_NAME, GameManager.getInstance().getPlayerName());
+                                break;
+                            case NAME_TAKEN:
+                                BackendManager.getInstance().getNameTakenProperty().add(1);
+                                break;
+                            case WAIT_TO_START:
+                                BackendManager.getInstance().getNameTakenProperty().subtract(1);
                                 break;
                             case GAME_BOARD:
                                 // Server is sending game board
@@ -122,7 +127,7 @@ public class BoggleClient implements Runnable{
             @Override
             public void run() {
                 while (self.isRunning()) {
-                    if(codeQueue.isEmpty()) {
+                    if(dataQueue.isEmpty()) {
                         try {
                             // waiting until woken
                             NetworkUtils.debugPrint(debugName, "Waiting until woken...");
@@ -138,12 +143,12 @@ public class BoggleClient implements Runnable{
                     }
                     if (!self.isRunning()) break;
                     try {
-                        NetworkUtils.debugPrint(debugName, "Got pinged for " + codeQueue.peek());
+                        NetworkUtils.debugPrint(debugName, "Got pinged for " + dataQueue.peek());
 
-                        switch (codeQueue.peek().getKey()) {
+                        switch (dataQueue.peek().getKey()) {
                             case PLAYER_NAME:
                                 // Send player name to server
-                                outStream.writeObject(codeQueue.poll());
+                                outStream.writeObject(dataQueue.poll());
                                 break;
                             case GAME_BOARD:
                                 // Ask server for board

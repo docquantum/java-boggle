@@ -4,7 +4,9 @@ import edu.unl.cse.csce361.boggle.backend.network.BoggleClient;
 import edu.unl.cse.csce361.boggle.backend.network.BoggleServer;
 import edu.unl.cse.csce361.boggle.backend.network.OpCode;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -32,7 +34,7 @@ public class BackendManager {
     // Singleton
     private static BackendManager uniqueInstance = null;
     // Observing that all have connected
-    private BooleanProperty allConnected = new SimpleBooleanProperty();
+    private IntegerProperty nameTaken = new SimpleIntegerProperty(0);
 
     private BackendManager() {
         this.dictionary = loadDictionary();
@@ -54,7 +56,6 @@ public class BackendManager {
     }
 
     public boolean checkPlayer(String playerName){
-
         if(this.playerNames.contains(playerName)){
             return true;
         }else{
@@ -107,10 +108,13 @@ public class BackendManager {
         this.port = port;
     }
 
-    public String sendPlayerName(String playerName){
+    public void sendPlayerName(String playerName){
         client.sendDataToServer(OpCode.PLAYER_NAME, playerName);
-        return playerName;
     };
+
+    public IntegerProperty getNameTakenProperty() {
+        return nameTaken;
+    }
 
     // Server Comm
     public void setNumOfClients(int numOfClients){
@@ -134,7 +138,7 @@ public class BackendManager {
     }
 
     public BooleanProperty getAllConnectedProperty(){
-        return this.server.getAllConnectedProperty();
+        return this.server.getAllReadyProperty();
     }
 
     public void hostStartGame(){

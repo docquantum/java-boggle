@@ -17,7 +17,7 @@ public class BoggleServer implements Runnable {
     Vector<ClientHandler> clients;
     private final int numOfClients;
     private boolean serverRunning;
-    private BooleanProperty allConnected;
+    private BooleanProperty allReady;
 
     /**
      * Builds a new server, will bind to any available port on the system.
@@ -41,7 +41,7 @@ public class BoggleServer implements Runnable {
         this.clients = new Vector<>(numOfClients);
         this.runningThreads = new Vector<>(numOfClients);
         this.finishedThreads = new Vector<>(numOfClients);
-        this.allConnected = new SimpleBooleanProperty();
+        this.allReady = new SimpleBooleanProperty();
     }
 
     public void stopServer(){
@@ -110,8 +110,8 @@ public class BoggleServer implements Runnable {
         return this.socket.getLocalPort();
     }
 
-    public BooleanProperty getAllConnectedProperty(){
-        return this.allConnected;
+    public BooleanProperty getAllReadyProperty(){
+        return this.allReady;
     }
 
     /**
@@ -162,9 +162,10 @@ public class BoggleServer implements Runnable {
             // If all clients have connected, wait to start cleanup
             if(this.runningThreads.size() == this.numOfClients){
                 // Wait till all connect
-                while(!allConnected.get()){
-                    if(numOfClients == clients.stream().filter(clientHandler -> clientHandler.isConnected()).count()){
-                        allConnected.setValue(true);
+                while(!allReady.get()){
+                    if(numOfClients == clients.stream().filter(clientHandler -> clientHandler.clientIsReady()).count()){
+                        sendDataToAllClients(OpCode.START_GAME, null);
+                        allReady.setValue(true);
                         break;
                     }
                     try {

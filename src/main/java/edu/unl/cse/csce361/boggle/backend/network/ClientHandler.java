@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -22,6 +23,7 @@ public class ClientHandler implements Runnable {
     private Thread selfThread;
     private Queue<Pair<OpCode, Object>> dataQueue;
     private boolean handlerRunning;
+    private boolean clientIsReady;
 
     public ClientHandler(BoggleServer boggleServer, Socket socket) throws IOException {
         this.boggleServer = boggleServer;
@@ -29,12 +31,15 @@ public class ClientHandler implements Runnable {
         this.outStream = new ObjectOutputStream(this.socket.getOutputStream());
         this.inStream = new ObjectInputStream(this.socket.getInputStream());
         this.handlerRunning = true;
-        this.dataQueue = new PriorityQueue<>();
+        this.clientIsReady = false;
+        this.dataQueue = new LinkedList<>();
     }
 
     public boolean isConnected(){
         return this.socket.isConnected();
     }
+
+    public boolean clientIsReady(){return clientIsReady;}
 
     public void stopHandler() throws InterruptedException, IOException {
         NetworkUtils.debugPrint(debugName,"Closing...");
@@ -51,7 +56,7 @@ public class ClientHandler implements Runnable {
     }
 
     public synchronized void queueData(OpCode code, Object data){
-        dataQueue.add(new Pair<OpCode, Object>(code, data));
+        dataQueue.add(new Pair<>(code, data));
         synchronized (sendData){
             sendData.notify();
         }
@@ -84,6 +89,7 @@ public class ClientHandler implements Runnable {
                                 if(!BackendManager.getInstance().checkPlayer((String) data.getValue())){
                                     BackendManager.getInstance().addPlayer((String) data.getValue());
                                     queueData(OpCode.WAIT_TO_START, null);
+                                    clientIsReady = true;
                                 } else {
                                     queueData(OpCode.NAME_TAKEN, null);
                                 }
