@@ -42,11 +42,11 @@ public class networkMain {
         System.out.println(server.getAddress());
 
         sleep(100);
-        server.sendDataToAllClients(OpCode.GAME_BOARD);
+        //server.sendDataToAllClients(OpCode.GAME_BOARD);
         //sleep(100);
-        server.sendDataToAllClients(OpCode.PLAYER_NAME);
+        //server.sendDataToAllClients(OpCode.PLAYER_NAME);
         //sleep(100);
-        server.sendDataToAllClients(OpCode.EXIT);
+        //server.sendDataToAllClients(OpCode.EXIT);
 
         try{
             System.out.println("[Main] joining Client 1");

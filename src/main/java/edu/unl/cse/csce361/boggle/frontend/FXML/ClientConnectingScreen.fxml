@@ -67,7 +67,7 @@
             </Button>
             <Label fx:id="spinner" text="" textAlignment="CENTER">
                <font>
-                  <Font name="Arial Bold" size="24.0" />
+                  <Font name="Arial" size="14.0" />
                </font>
                <GridPane.margin>
                   <Insets bottom="30.0" />

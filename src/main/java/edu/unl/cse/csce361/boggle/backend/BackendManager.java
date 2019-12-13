@@ -138,7 +138,7 @@ public class BackendManager {
     }
 
     public void hostStartGame(){
-        this.server.sendDataToAllClients(OpCode.START_GAME);
+        this.server.sendDataToAllClients(OpCode.START_GAME, null);
     }
 
 

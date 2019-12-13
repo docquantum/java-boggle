@@ -66,7 +66,7 @@ public class ScreenController {
     @FXML
     public void singlePlay (Event event) throws IOException {
         manage.setMode(1);
-        switchScreen(event, "FXML/SinglePlayerScreen.fxml");
+        switchScreen(event, "FXML/ClientChooseNameScreen.fxml");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -143,6 +143,8 @@ public class ScreenController {
 
     @FXML
     public void gamePlayClient (Event event) throws IOException {
+        spinner.setText("");
+        spinner.setTextFill(Color.BLACK);
         String ipAddress = ipAddressField.getText();
         String port = portField.getText();
 
@@ -164,6 +166,7 @@ public class ScreenController {
             portErrorLabel.setVisible(false);
             BackendManager.getInstance().setAddress(ipAddress);
             BackendManager.getInstance().setPort(Integer.parseInt(port));
+            spinner.setText("Connecting");
             Timeline timeline = new Timeline(new KeyFrame(
                     Duration.seconds(1),
                     ae -> spinWaitAnimate()));
@@ -180,8 +183,14 @@ public class ScreenController {
                                 timeline.stop();
                                 spinner.setText(error);
                                 spinner.setTextFill(Color.FIREBRICK);
-                                spinner.setFont(Font.font("Arial", 14));
                                 ((Button) event.getSource()).setDisable(false);
+                            } else{
+                                try {
+                                    timeline.stop();
+                                    switchScreen(event, "FXML/ClientChooseNameScreen.fxml");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     });
@@ -230,8 +239,7 @@ public class ScreenController {
     }
 
     private void spinWaitAnimate(){
-        if(spinner.getText().equals("")) spinner.setText("Connecting");
-        else if(spinner.getText().equals("Connecting")) spinner.setText("Connecting.");
+        if(spinner.getText().equals("Connecting")) spinner.setText("Connecting.");
         else if(spinner.getText().equals("Connecting.")) spinner.setText("Connecting..");
         else if(spinner.getText().equals("Connecting..")) spinner.setText("Connecting...");
         else if(spinner.getText().equals("Connecting...")) spinner.setText("Connecting");
