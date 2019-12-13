@@ -23,27 +23,27 @@ public class EndScreenController implements Initializable {
     String playerName = manage.getPlayerName();
 
     @FXML
-    private Label PlayerScore;
+    private Label thisRoundScore;
+
+    @FXML
+    private Label totalScore;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if(manage.getMode() == 1) {
-            setPlayerScore();
-        }
-    }
-
-    private void setPlayerScore(){
-        Integer score = manage.getScores();
-        PlayerScore.setText(score.toString());
+        thisRoundScore.setText(String.valueOf(manage.getSinglePlayerScore()));
+        totalScore.setText(String.valueOf(manage.getTotalScore()));
     }
 
     @FXML
-    public void newPlay (Event event) throws IOException {
-        sc.newPlay(event);
+    public void newRound (Event event) throws IOException {
+        manage.genNewBoard();
+        new Thread(() -> manage.cacheAnswers()).start();
+        sc.switchScreen( event, "FXML/BoggleScreen.fxml");
     }
 
     @FXML
-    public void exitGame (Event event) throws IOException {
-        sc.exitGame(event);
+    public void mainMenu (Event event) throws IOException {
+        manage.resetState();
+        sc.mainMenu(event);
     }
 }

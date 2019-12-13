@@ -27,7 +27,7 @@ public class HostWaitScreenController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         IPAddress.setText(BackendManager.getInstance().getAddress());
         portNumber.setText(String.valueOf(BackendManager.getInstance().getPort()));
-        BackendManager.getInstance().getAlReadyProperty().addListener(new ChangeListener<Boolean>() {
+        BackendManager.getInstance().getAllReadyProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldBool, Boolean newBool) {
                 if(newBool){

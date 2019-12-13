@@ -1,5 +1,6 @@
 package edu.unl.cse.csce361.boggle.backend.network;
 
+import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -17,7 +18,6 @@ public class BoggleServer implements Runnable {
     Vector<ClientHandler> clients;
     private final int numOfClients;
     private boolean serverRunning;
-    private BooleanProperty allReady;
 
     /**
      * Builds a new server, will bind to any available port on the system.
@@ -41,7 +41,6 @@ public class BoggleServer implements Runnable {
         this.clients = new Vector<>(numOfClients);
         this.runningThreads = new Vector<>(numOfClients);
         this.finishedThreads = new Vector<>(numOfClients);
-        this.allReady = new SimpleBooleanProperty();
     }
 
     public void stopServer(){
@@ -110,10 +109,6 @@ public class BoggleServer implements Runnable {
         return this.socket.getLocalPort();
     }
 
-    public BooleanProperty getAllReadyProperty(){
-        return this.allReady;
-    }
-
     /**
      * Allows for upper level functions to send data to a client. Used by host to get info
      * from a client or to notify them of changes.
@@ -162,9 +157,9 @@ public class BoggleServer implements Runnable {
             // If all clients have connected, wait to start cleanup
             if(this.runningThreads.size() == this.numOfClients){
                 // Wait till all connect
-                while(!allReady.get()){
+                while(!BackendManager.getInstance().getAllReadyProperty().get()){
                     if(numOfClients == clients.stream().filter(clientHandler -> clientHandler.clientIsReady()).count()){
-                        allReady.setValue(true);
+                        BackendManager.getInstance().getAllReadyProperty().setValue(true);
                         break;
                     }
                     try {

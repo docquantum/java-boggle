@@ -34,13 +34,14 @@ public class BackendManager {
     private int port = -1;
     // Singleton
     private static BackendManager uniqueInstance = null;
-    // Observing that all have connected
+    // Observable State Properties
+    private BooleanProperty allReady = new SimpleBooleanProperty(false);
     private IntegerProperty nameTaken = new SimpleIntegerProperty(0);
+
 
     private BackendManager() {
         this.dictionary = loadDictionary();
         this.playerNames = new HashSet<String>();
-
     }
 
     public static BackendManager getInstance() {
@@ -116,6 +117,11 @@ public class BackendManager {
         return nameTaken;
     }
 
+    // Shread Com
+    public BooleanProperty getAllReadyProperty(){
+        return this.allReady;
+    }
+
     // Server Comm
     public void setNumOfClients(int numOfClients){
         this.numOfClients = numOfClients;
@@ -135,10 +141,6 @@ public class BackendManager {
             return -1;
         }
         return this.server.getPort();
-    }
-
-    public BooleanProperty getAlReadyProperty(){
-        return this.server.getAllReadyProperty();
     }
 
     public void hostStartGame(){

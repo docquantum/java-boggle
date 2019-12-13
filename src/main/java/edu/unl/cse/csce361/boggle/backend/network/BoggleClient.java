@@ -84,14 +84,14 @@ public class BoggleClient implements Runnable{
                                 BackendManager.getInstance().getNameTakenProperty().setValue(BackendManager.getInstance().getNameTakenProperty().get() + 1);
                                 break;
                             case WAIT_TO_START:
-                                BackendManager.getInstance().getNameTakenProperty().subtract(1);
+                                BackendManager.getInstance().getNameTakenProperty().setValue(BackendManager.getInstance().getNameTakenProperty().get() - 1);
                                 break;
                             case GAME_BOARD:
                                 // Server is sending game board
                                 GameManager.getInstance().setGameBoard((String[][]) data.getValue());
                                 break;
                             case START_GAME:
-                                //TODO GameManager.getInstance().startGame();
+                                BackendManager.getInstance().getAllReadyProperty().setValue(true);
                                 break;
                             case FINISHED:
                                 //TODO GameManager.getInstance().endGame();

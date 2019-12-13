@@ -14,7 +14,8 @@ public class GameManager {
 	private String playerName;
 	private List<String> playerWordInput = new ArrayList<>();
 	private Set<String> answers;
-	private int Mode = 2;               //1 is single player 2 is multi player
+	private int totalScore = 0;
+	private boolean isMultiplayer = false;
 
 	private GameManager(){
 		board = GameBoard.getInstance();
@@ -81,16 +82,38 @@ public class GameManager {
 		board.setGameBoard(gameBoard);
 	}
 
-	//gets the score for singlePlayer
-	public int getScores(){
-	    return BoggleUtils.calculateScore(this.answers, playerWordInput.stream().collect(Collectors.toSet()));
+	public void resetState(){
+		this.setMultiplayer(false);
+		genNewBoard();
+		this.setPlayerName(null);
+		this.setTotalScore(0);
 	}
 
-	public  void setMode(int mode){
-		Mode = mode;
+	//gets the score for singlePlayer
+	public int getSinglePlayerScore(){
+		int score = BoggleUtils.calculateScore(this.answers, playerWordInput.stream().collect(Collectors.toSet()));
+	    addToTotalScore(score);
+	    return score;
 	}
-	public int getMode(){
-		return Mode;
+
+	public void addToTotalScore(int score){
+		this.totalScore += score;
+	}
+
+	public int getTotalScore(){
+		return this.totalScore;
+	}
+
+	public void setTotalScore(int score){
+		this.totalScore = score;
+	}
+
+	public void setMultiplayer(boolean isMultiplayer){
+		this.isMultiplayer = isMultiplayer;
+	}
+
+	public boolean isMultiplayer(){
+		return this.isMultiplayer;
 	}
 
 	//Save for Sprint 2

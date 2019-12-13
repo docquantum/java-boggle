@@ -72,7 +72,8 @@ public class BoggleScreenController implements Initializable {
     private Label timer;
     @FXML
     private Label totalScore;
-    private int time = 10;
+
+    private int time = 15;
 
     public static BoggleScreenController getInstance() {
         if(uniqueInstance == null){
@@ -85,6 +86,7 @@ public class BoggleScreenController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setBoggleScreenLabels();
         setPlayerName();
+        totalScore.setText(String.valueOf(manage.getTotalScore()));
         timeline();
     }
 
@@ -119,7 +121,7 @@ public class BoggleScreenController implements Initializable {
         Timeline timeline = new Timeline(new KeyFrame(
                 Duration.seconds(1),
                 ae -> changeTimer()));
-        timeline.setCycleCount(10);
+        timeline.setCycleCount(time);
         timeline.setOnFinished(event -> onTimerFinish());
         timeline.play();
     }
@@ -127,9 +129,6 @@ public class BoggleScreenController implements Initializable {
     public void changeTimer(){
         time--;
         timer.setText(time + " seconds");
-        if(time == 0){
-            results.setVisible(true);
-        }
     }
 
     public void onTimerFinish(){
@@ -137,6 +136,7 @@ public class BoggleScreenController implements Initializable {
             playerInput1.setDisable(true);
             playerInput2.setDisable(true);
             manage.setPlayerInput(wordViewer.getItems());
+            seeResults();
         }
     }
 
@@ -153,8 +153,16 @@ public class BoggleScreenController implements Initializable {
     }
 
     @FXML
-    public void seeResults (Event event) throws IOException {
-        sc.endPlay(event);
+    public void seeResults () {
+        if (!manage.isMultiplayer()) {
+            try {
+                sc.switchScreen("FXML/SinglePlayerEndScreen.fxml");
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        } else {
+
+        }
     }
 
 

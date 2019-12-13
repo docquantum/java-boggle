@@ -6,8 +6,6 @@ import edu.unl.cse.csce361.boggle.logic.GameManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,8 +14,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -64,32 +62,32 @@ public class ScreenController {
     private Label spinner;
     @FXML
     private Button clientStartGameButt;
+    @FXML
+    private Button clientWaitStartButt;
+    @FXML
+    private Label clientWaitLabel;
 
     @FXML
     public void singlePlay (Event event) throws IOException {
-        manage.setMode(1);
-        switchScreen(event, "FXML/ClientChooseNameScreen.fxml");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                manage.cacheAnswers();
-            }
-        }).start();
+        manage.setMultiplayer(false);
+        manage.setPlayerName("Single Player");
+        switchScreen(event, "FXML/BoggleScreen.fxml");
+        new Thread(() -> manage.cacheAnswers()).start();
     }
 
     @FXML
     public void endPlay (Event event) throws IOException {
-        if(manage.getMode() == 1) {
-            switchScreen(event, "FXML/EndScreen.fxml");
+        if(!manage.isMultiplayer()) {
+            switchScreen(event, "FXML/SinglePlayerEndScreen.fxml");
         }
-        else if(manage.getMode() == 2){
+        else if(manage.isMultiplayer()){
             switchScreen(event, "FXML/MultiScoreScreen.fxml");
         }
     }
 
     @FXML
     public void multiPlay (Event event) throws IOException {
-        manage.setMode(2);
+        manage.setMultiplayer(true);
         switchScreen(event, "FXML/ConnectAsScreen.fxml");
     }
 
@@ -101,23 +99,6 @@ public class ScreenController {
     @FXML
     public void connectAsClientPlay (Event event) throws IOException {
         switchScreen(event, "FXML/ClientConnectingScreen.fxml");
-    }
-
-    @FXML
-    public void newPlay (Event event) throws IOException {
-        manage.genNewBoard();
-        switchScreen(event, "FXML/GameTypeScreen.fxml");
-    }
-
-    @FXML
-    public void gamePlay (Event event) throws IOException {
-        String playerName = this.playerNameField.getText();
-        if(playerName.trim().isBlank()){
-            nameError.setVisible(true);
-        } else{
-            manage.setPlayerName(playerName);
-            switchScreen(event, "FXML/BoggleScreen.fxml");
-        }
     }
 
     @FXML
@@ -212,29 +193,36 @@ public class ScreenController {
             nameError.setVisible(true);
             clientStartGameButt.setDisable(false);
         } else {
-            BackendManager.getInstance().getNameTakenProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observableValue, Number oldInt, Number newInt) {
-                    if(oldInt.intValue() < newInt.intValue()){
+            BackendManager.getInstance().getNameTakenProperty().addListener((observableValue, oldInt, newInt) -> {
+                if(oldInt.intValue() < newInt.intValue()){
+                    Platform.runLater(() -> {
                         nameError.setText("Name is taken, please try another");
                         nameError.setVisible(true);
                         clientStartGameButt.setDisable(false);
-                    } else if(oldInt.intValue() > newInt.intValue()){
-                        manage.setPlayerName(playerName);
+                    });
+                } else if(oldInt.intValue() > newInt.intValue()){
+                    manage.setPlayerName(playerName);
+                    Platform.runLater(() -> {
                         try {
-                            switchScreen(event, "FXML/BoggleScreen.fxml");
+                            switchScreen(event, "FXML/ClientWaitScreen.fxml");
+                            BackendManager.getInstance().getAllReadyProperty().addListener((obsBool, oldBool, newBool) -> {
+                                if(newBool){
+                                    Platform.runLater(() -> {
+                                        try {
+                                            switchScreen("FXML/BoggleScreen.fxml");
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    });
+                                }
+                            });
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
+                    });
                 }
             });
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    BackendManager.getInstance().sendPlayerName(playerName);
-                }
-            }).start();
+            new Thread(() -> BackendManager.getInstance().sendPlayerName(playerName)).start();
         }
 
     }
@@ -247,8 +235,8 @@ public class ScreenController {
     }
 
     @FXML
-    public void exitGame (Event event) throws IOException {
-        Platform.exit();
+    public void mainMenu(Event event) throws IOException {
+        switchScreen(event, "FXML/GameTypeScreen.fxml");
     }
 
     public void switchScreen(Event event, String ScreenName) throws IOException {
@@ -258,8 +246,35 @@ public class ScreenController {
         Parent parent  =  loader.load();
 
         Scene scene = new Scene(parent);
-        Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
 
+        Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
+        window.setScene(scene);
+        window.show();
+    }
+
+    public void switchScreen(Stage window, String ScreenName) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource(ScreenName));
+        Parent parent  =  loader.load();
+
+        Scene scene = new Scene(parent);
+
+        window.setScene(scene);
+        window.show();
+    }
+
+    public void switchScreen(String ScreenName) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource(ScreenName));
+        Parent parent = loader.load();
+
+        Scene scene = new Scene(parent);
+        Stage window = Stage.getWindows().stream()
+                .filter(Window::isShowing)
+                .map(window1 -> (Stage) window1)
+                .findFirst()
+                .orElse(null);
+        if(window == null) throw new IOException();
         window.setScene(scene);
         window.show();
     }
