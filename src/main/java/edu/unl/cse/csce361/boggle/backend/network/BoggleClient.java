@@ -89,16 +89,26 @@ public class BoggleClient implements Runnable{
                             break;
                         case WAIT_TO_START:
                             BackendManager.getInstance().getNameTakenProperty().setValue(BackendManager.getInstance().getNameTakenProperty().get() - 1);
+                            new Thread(() -> {
+                                while(!self.gameBoardReceived){
+                                    BackendManager.getInstance().getGameBoardFromServer();
+                                    try {
+                                        Thread.currentThread().sleep(5000L);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                            }).start();
                             break;
                         case GAME_BOARD:
-                            GameManager.getInstance().setGameBoard((String[][]) data.getValue());
-                            self.setGameBoardReceived(true);
+                            if(!self.gameBoardReceived){
+                                GameManager.getInstance().setGameBoard((String[][]) data.getValue());
+                                self.setGameBoardReceived(true);
+                            }
                             break;
                         case START_GAME:
-                            new Thread(() -> {
-                                while(self.gameBoardReceived);
-                                BackendManager.getInstance().getAllReadyProperty().setValue(true);
-                            }).start();
+                            BackendManager.getInstance().getAllReadyProperty().setValue(true);
                             break;
                         case FINISHED:
                             //TODO GameManager.getInstance().endGame();
@@ -157,16 +167,14 @@ public class BoggleClient implements Runnable{
                     NetworkUtils.debugPrint(debugName, "Got pinged for " + dataQueue.peek());
                     switch (dataQueue.peek().getKey()) {
                         case PLAYER_NAME:
+                        case GAME_BOARD:
+                            // Ask server for board
                             // Send player name to server
                             outStream.writeObject(dataQueue.poll());
                             break;
-                        case GAME_BOARD:
-                            // Ask server for board
-                            outStream.writeObject(OpCode.GAME_BOARD);
-                            break;
                         case START_GAME:
                             // Tell server client has started game
-                            outStream.writeObject(OpCode.START_GAME);
+                            outStream.writeObject(dataQueue.poll());
                             break;
                         case FINISHED:
                             // Tell server client has finished and is waiting
@@ -182,7 +190,7 @@ public class BoggleClient implements Runnable{
                             break;
                         case EXIT:
                             // Tell server that client is exiting
-                            outStream.writeUTF(OpCode.EXIT.toString());
+                            outStream.writeObject(dataQueue.poll());
                             break;
                         default:
                             break;
@@ -195,6 +203,8 @@ public class BoggleClient implements Runnable{
 
         sendData.start();
         getData.start();
+
+        BackendManager.getInstance().getGameBoardFromServer();
 
         try {
             synchronized (selfThread){

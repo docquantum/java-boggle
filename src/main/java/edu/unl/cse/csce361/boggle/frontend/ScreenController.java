@@ -166,9 +166,6 @@ public class ScreenController {
                     } else{
                         try {
                             timeline.stop();
-                            new Thread(() -> {
-                                BackendManager.getInstance().getGameBoardFromServer();
-                            }).start();
                             switchScreen(event, "FXML/ClientChooseNameScreen.fxml");
                         } catch (IOException e) {
                             e.printStackTrace();
