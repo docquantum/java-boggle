@@ -81,7 +81,7 @@ public class BoggleClient implements Runnable{
                                 sendDataToServer(OpCode.PLAYER_NAME, GameManager.getInstance().getPlayerName());
                                 break;
                             case NAME_TAKEN:
-                                BackendManager.getInstance().getNameTakenProperty().add(1);
+                                BackendManager.getInstance().getNameTakenProperty().setValue(BackendManager.getInstance().getNameTakenProperty().get() + 1);
                                 break;
                             case WAIT_TO_START:
                                 BackendManager.getInstance().getNameTakenProperty().subtract(1);

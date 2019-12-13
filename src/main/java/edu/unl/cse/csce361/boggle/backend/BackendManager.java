@@ -137,7 +137,7 @@ public class BackendManager {
         return this.server.getPort();
     }
 
-    public BooleanProperty getAllConnectedProperty(){
+    public BooleanProperty getAlReadyProperty(){
         return this.server.getAllReadyProperty();
     }
 
