@@ -122,18 +122,20 @@ public class ScreenController {
 
     @FXML
     public void gamePlayHost (Event event) throws IOException {
+        multiNameError.setVisible(false);
+        multiNumPlayerError.setVisible(false);
         String playerName = this.playerNameField.getText();
         String numberPlayers = numPlayer.getText();
 
         if(playerName.trim().isBlank()){
             multiNameError.setVisible(true);
         }
-        else if( numberPlayers.trim().isBlank()){
+        else if(numberPlayers.trim().isBlank()){
             multiNumPlayerError.setVisible(true);
         }
         else{
-            // TODO make player into its own class, create, set the GM player as that player obj
             manage.setPlayerName(playerName);
+            BackendManager.getInstance().addPlayer(playerName);
             BackendManager.getInstance().setHostMode(true);
             BackendManager.getInstance().setNumOfClients(Integer.parseInt(numberPlayers));
             BackendManager.getInstance().startNetwork();

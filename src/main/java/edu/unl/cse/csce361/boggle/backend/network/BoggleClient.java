@@ -18,8 +18,13 @@ public class BoggleClient implements Runnable{
     private Thread sendData;
     private Thread getData;
     private Thread selfThread;
+    private static BoggleClient self;
     private Queue<Pair<OpCode, Object>> codeQueue;
     private boolean running;
+
+    public boolean isRunning() {
+        return running;
+    }
 
     public BoggleClient(String ip, int port) throws IOException {
         this.socket = new Socket(ip, port);
@@ -27,6 +32,7 @@ public class BoggleClient implements Runnable{
         this.inStream = new ObjectInputStream(this.socket.getInputStream());
         this.codeQueue = new PriorityQueue<>();
         this.running = true;
+        self = this;
     }
 
     public void stopClient() throws IOException, InterruptedException {
@@ -51,7 +57,7 @@ public class BoggleClient implements Runnable{
 
     @Override
     public void run() {
-        this.selfThread = Thread.currentThread();
+        selfThread = Thread.currentThread();
         NetworkUtils.debugPrint(debugName, "Client connected to " + socket);
         /**
          * Implements the server/client threads to get and pass
@@ -65,17 +71,15 @@ public class BoggleClient implements Runnable{
         this.getData = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (running) {
+                while (self.isRunning()) {
                     try {
-                        if(running){
-                            break;
-                        }
+                        if(!self.isRunning()) break;
                         NetworkUtils.debugPrint(debugName, "Waiting for input...");
                         Pair<OpCode, Object> data = (Pair<OpCode, Object>) inStream.readObject();
                         NetworkUtils.debugPrint(debugName, "received " + data.getKey().toString());
                         switch (data.getKey()) {
                             case PLAYER_NAME:
-                                // Not sure yet
+                                sendDataToServer(OpCode.PLAYER_NAME, GameManager.getInstance().getPlayerName());
                                 break;
                             case GAME_BOARD:
                                 // Server is sending game board
@@ -100,9 +104,8 @@ public class BoggleClient implements Runnable{
                                 break;
                         }
                     } catch (IOException e){
-                        if(running){
+                        if(self.isRunning()){
                             e.printStackTrace();
-                            running = false;
                         }
                         NetworkUtils.debugPrint(debugName, "Connection Closed");
                     } catch(ClassNotFoundException | InterruptedException e) {
@@ -118,7 +121,7 @@ public class BoggleClient implements Runnable{
         this.sendData = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (running) {
+                while (self.isRunning()) {
                     if(codeQueue.isEmpty()) {
                         try {
                             // waiting until woken
@@ -133,14 +136,14 @@ public class BoggleClient implements Runnable{
                             }
                         }
                     }
-                    if (!running) break;
+                    if (!self.isRunning()) break;
                     try {
                         NetworkUtils.debugPrint(debugName, "Got pinged for " + codeQueue.peek());
 
                         switch (codeQueue.peek().getKey()) {
                             case PLAYER_NAME:
                                 // Send player name to server
-                                outStream.writeObject(codeQueue.poll().getValue());
+                                outStream.writeObject(codeQueue.poll());
                                 break;
                             case GAME_BOARD:
                                 // Ask server for board

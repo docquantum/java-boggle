@@ -120,8 +120,8 @@ public class BoggleServer implements Runnable {
      * @param clientIndex
      * @param code
      */
-    public synchronized void sendDataToClient(int clientIndex, OpCode code){
-        this.clients.get(clientIndex).queueData(code);
+    public synchronized void sendDataToClient(int clientIndex, OpCode code, Object data){
+        this.clients.get(clientIndex).queueData(code, data);
     }
 
     /**
@@ -129,9 +129,9 @@ public class BoggleServer implements Runnable {
      * from all clients or to notify them of changes.
      * @param code
      */
-    public synchronized void sendDataToAllClients(OpCode code){
+    public synchronized void sendDataToAllClients(OpCode code, Object object){
         for (ClientHandler client: this.clients) {
-            client.queueData(code);
+            client.queueData(code, object);
         }
     }
 
@@ -141,15 +141,6 @@ public class BoggleServer implements Runnable {
      */
     public int getNumOfConnectedClients(){
         return this.runningThreads.size();
-    }
-
-    /**
-     * TODO should be able to get data from a specific client as generic object... Needs thought
-     * @param clientIndex
-     * @return
-     */
-    public Object getDataFromClient(int clientIndex){
-        return null;
     }
 
     /**

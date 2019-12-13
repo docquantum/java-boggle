@@ -12,6 +12,18 @@ public enum OpCode {
     PLAYER_NAME,
 
     /**
+     * Server: Tells client name has been taken
+     * Client: Tells player name has been taken
+     */
+    NAME_TAKEN,
+
+    /**
+     * Server: Tells client to wait to start
+     * Client: Waits to receive START_GAME
+     */
+    WAIT_TO_START,
+
+    /**
      * Client: Asks for game board
      * Server: Returns a copy of the game board.
      */

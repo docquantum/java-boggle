@@ -31,6 +31,7 @@ public class BackendManager {
     private int port = -1;
     // Singleton
     private static BackendManager uniqueInstance = null;
+    // Observing that all have connected
     private BooleanProperty allConnected = new SimpleBooleanProperty();
 
     private BackendManager() {

@@ -1,6 +1,8 @@
 package edu.unl.cse.csce361.boggle.backend.network;
 
+import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.logic.GameManager;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,7 +20,7 @@ public class ClientHandler implements Runnable {
     private Thread sendData;
     private Thread getData;
     private Thread selfThread;
-    private Queue<OpCode> codeQueue;
+    private Queue<Pair<OpCode, Object>> dataQueue;
     private boolean handlerRunning;
 
     public ClientHandler(BoggleServer boggleServer, Socket socket) throws IOException {
@@ -27,7 +29,7 @@ public class ClientHandler implements Runnable {
         this.outStream = new ObjectOutputStream(this.socket.getOutputStream());
         this.inStream = new ObjectInputStream(this.socket.getInputStream());
         this.handlerRunning = true;
-        this.codeQueue = new PriorityQueue<>();
+        this.dataQueue = new PriorityQueue<>();
     }
 
     public boolean isConnected(){
@@ -48,8 +50,8 @@ public class ClientHandler implements Runnable {
         boggleServer.cleanUpThread(Thread.currentThread());
     }
 
-    public synchronized void queueData(OpCode code){
-        codeQueue.add(code);
+    public synchronized void queueData(OpCode code, Object data){
+        dataQueue.add(new Pair<OpCode, Object>(code, data));
         synchronized (sendData){
             sendData.notify();
         }
@@ -74,16 +76,21 @@ public class ClientHandler implements Runnable {
                 while(handlerRunning){
                     try {
                         NetworkUtils.debugPrint(debugName, "Waiting for input...");
-                        OpCode code = (OpCode) inStream.readObject();
-                        NetworkUtils.debugPrint( debugName, "received " + code.toString());
-                        switch (code){
+                        Pair<OpCode, Object> data = (Pair<OpCode, Object>) inStream.readObject();
+                        NetworkUtils.debugPrint( debugName, "received " + data.getKey().toString());
+                        switch (data.getKey()){
                             case PLAYER_NAME:
                                 // Got player name from client
-                                System.out.println((String) inStream.readObject());
+                                if(!BackendManager.getInstance().checkPlayer((String) data.getValue())){
+                                    BackendManager.getInstance().addPlayer((String) data.getValue());
+                                    queueData(OpCode.WAIT_TO_START, null);
+                                } else {
+                                    queueData(OpCode.NAME_TAKEN, null);
+                                }
                                 break;
                             case GAME_BOARD:
                                 // Client asked for game board
-                                queueData(OpCode.GAME_BOARD);
+                                queueData(OpCode.GAME_BOARD, GameManager.getInstance().getBoard());
                                 break;
                             case START_GAME:
                                 // Client started game
@@ -97,7 +104,7 @@ public class ClientHandler implements Runnable {
                                 break;
                             case ALL_SCORES:
                                 // Client wants all the scores
-                                queueData(OpCode.ALL_SCORES);
+                                //queueData(OpCode.ALL_SCORES);
                                 break;
                             case EXIT:
                                 // Client has exited
@@ -124,7 +131,7 @@ public class ClientHandler implements Runnable {
             @Override
             public void run() {
                 while(handlerRunning){
-                    if(codeQueue.isEmpty()){
+                    if(dataQueue.isEmpty()){
                         try {
                             // waiting until woken
                             NetworkUtils.debugPrint(debugName, "Waiting until woken...");
@@ -139,20 +146,19 @@ public class ClientHandler implements Runnable {
                         break;
                     }
                     try {
-                        NetworkUtils.debugPrint(debugName, "Got pinged for " + codeQueue.peek());
-                        switch (codeQueue.poll()) {
+                        NetworkUtils.debugPrint(debugName, "Server sending " + dataQueue.peek().getKey());
+                        switch (dataQueue.peek().getKey()) {
                             case PLAYER_NAME:
                                 // Asking player for player name
-                                outStream.writeObject(OpCode.PLAYER_NAME);
-                                break;
+                            case NAME_TAKEN:
+                                // Telling player that they need to pick a new name
+                            case WAIT_TO_START:
+                                // Telling player to wait for START_GAME code
                             case GAME_BOARD:
-                                // Telling player it's sending game board.
-                                outStream.writeObject(OpCode.GAME_BOARD);
-                                outStream.writeObject(GameManager.getInstance().getBoard());
-                                break;
+                                // Sending board to player
                             case START_GAME:
                                 // Telling player to start game
-                                outStream.writeObject(OpCode.START_GAME);
+                                outStream.writeObject(dataQueue.poll());
                                 break;
                             case FINISHED:
                                 // Telling player everyone has finished
