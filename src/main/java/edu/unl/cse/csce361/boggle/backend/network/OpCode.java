@@ -6,13 +6,8 @@ package edu.unl.cse.csce361.boggle.backend.network;
  */
 public enum OpCode {
     /**
-     * Opt 1:
      * Server: Asks for player name from client
      * Client: returns it's name to server.
-     *
-     * Opt 2:
-     * Client: Asks for the other player's names
-     * Server: returns a list of player names.
      */
     PLAYER_NAME,
 
@@ -23,6 +18,7 @@ public enum OpCode {
     GAME_BOARD,
 
     /**
+     * Opt 1:
      * Server: Sends to all to start game
      * Client: Starts local game
      */

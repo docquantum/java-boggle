@@ -17,6 +17,7 @@ import static edu.unl.cse.csce361.boggle.backend.DictionaryLoader.getLinesInFile
 public class BackendManager {
 
     private Set<String> dictionary;
+    private Set<String> playerNames;
     // Determines server modality
     private boolean isHost = false;
     // Server mode
@@ -49,6 +50,22 @@ public class BackendManager {
 
     public boolean getHostMode(){
         return this.isHost;
+    }
+
+    public boolean checkPlayer(String playerName){
+
+        if(this.playerNames.contains(playerName)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void addPlayer(String playerName){
+
+        if(checkPlayer(playerName)){
+            this.playerNames.add(playerName);
+        }
     }
 
     public String startNetwork() {
