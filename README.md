@@ -2,7 +2,15 @@
 
 ##  Instructions to build and run the program
 
-(Add anything here we'll need to evaluate the functionality)
+Commit 446b57a8 (12:01):
+- Should be buildable, if it doesnt build, use maven directly and simply run
+`mvn compile` to get it built correctly.
+- Single player works, but was last set to 15 seconds of game time. There is a 
+variable that can be adjusted to set it back to 2 min (180 sec). 
+- Multiplayer works to connecting and starting, but not finishing the game
+(caluclating scores). 
+- For multiplayer, "number of players" corresponds to number of people who will
+connect, not total players.
 
 ##  Description
 
