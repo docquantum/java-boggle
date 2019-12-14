@@ -12,6 +12,10 @@ variable that can be adjusted to set it back to 2 min (180 sec).
 - For multiplayer, "number of players" corresponds to number of people who will
 connect, not total players.
 
+Commit 3b8de62 (18:48):
+- Can now be compiled to jar via `mvn package` and a springboard jar can be found
+in the 'target' folder
+
 ##  Description
 
 Procrastination Pastimes wants you to develop a computer game of Boggle.  The
