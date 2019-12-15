@@ -17,7 +17,6 @@ import javafx.animation.KeyFrame;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.stream.Collectors;
 
 public class BoggleScreenController implements Initializable {
 
@@ -136,8 +135,8 @@ public class BoggleScreenController implements Initializable {
         if(time == 0){
             playerInput1.setDisable(true);
             playerInput2.setDisable(true);
-            if(manage.isMultiplayer()){
-                manage.getLocalPlayer().setWords(wordViewer.getItems().stream().collect(Collectors.toSet()));
+            if(manage.isMultiPlayer()){
+                manage.getLocalPlayer().setWords(new HashSet<>(wordViewer.getItems()));
             } else {
                 manage.setPlayerInput(wordViewer.getItems());
             }
@@ -151,7 +150,7 @@ public class BoggleScreenController implements Initializable {
 
     @FXML
     public void submitWord (Event event) throws IOException {
-        if(!playerInput1.getText().isBlank() && !wordViewer.getItems().contains(playerInput1.getText().isBlank())){
+        if(!playerInput1.getText().trim().isBlank() && !wordViewer.getItems().contains(playerInput1.getText().trim())){
             wordViewer.getItems().add(playerInput1.getText().trim());
         }
         playerInput1.clear();
@@ -159,15 +158,16 @@ public class BoggleScreenController implements Initializable {
 
     @FXML
     public void seeResults () {
-        if (manage.isMultiplayer()) {
+        if (manage.isMultiPlayer()) {
             try {
+                new Thread(() -> sc.handleEndGame()).start();
                 sc.switchScreen("FXML/ScoreWaitingScreen.fxml");
             } catch (IOException e){
                 e.printStackTrace();
             }
         } else {
             try {
-                new Thread(() -> sc.handleEndGame()).start();
+                sc.handleEndGame();
                 sc.switchScreen("FXML/SinglePlayerEndScreen.fxml");
             } catch (IOException e){
                 e.printStackTrace();

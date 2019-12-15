@@ -1,11 +1,10 @@
 package edu.unl.cse.csce361.boggle.logic;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-public class Player {
+public class Player implements Serializable {
     private Set<String> words;
     private int playerScore;
     private String playerName;
@@ -49,5 +48,4 @@ public class Player {
     public void setPlayerScore(int playerScore) {
         this.playerScore = playerScore;
     }
-
 }

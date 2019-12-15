@@ -1,9 +1,6 @@
 package edu.unl.cse.csce361.boggle.logic;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BoggleUtils {
@@ -43,18 +40,20 @@ public class BoggleUtils {
         players.forEach(p -> p.addToPlayerTotalScore(p.getPlayerScore()));
     }
 
-    public static void removeDupilicates(Set<Player> players){
+    public synchronized static void removeDupilicates(Set<Player> players){
         List<String> allWords = players.stream()
                 .map(player -> player.getWords())
                 .map(set -> set.stream().collect(Collectors.toList()))
                 .flatMap(l -> l.stream())
                 .collect(Collectors.toList());
 
-        Set<String> duplicates = allWords.stream().filter(n -> !allWords.add(n)).collect(Collectors.toSet());
+        Set<String> unique = new HashSet<>();
+
+        Set<String> duplicates = allWords.stream().filter(s -> !unique.add(s))
+                .collect(Collectors.toSet());
 
         for (Player p: players) {
             p.getWords().removeAll(duplicates);
         }
     }
-
 }

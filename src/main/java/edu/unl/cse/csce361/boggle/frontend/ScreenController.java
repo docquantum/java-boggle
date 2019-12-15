@@ -3,6 +3,7 @@ package edu.unl.cse.csce361.boggle.frontend;
 import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.backend.network.NetworkUtils;
 import edu.unl.cse.csce361.boggle.logic.GameManager;
+import edu.unl.cse.csce361.boggle.logic.Player;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -69,25 +70,20 @@ public class ScreenController {
 
     @FXML
     public void singlePlay (Event event) throws IOException {
-        manage.setMultiplayer(false);
+        manage.setMultiPlayer(false);
         manage.setPlayerName("Single Player");
         switchScreen(event, "FXML/BoggleScreen.fxml");
         new Thread(() -> manage.cacheAnswers()).start();
     }
 
     @FXML
-    public void endPlay (Event event) throws IOException {
-        if(!manage.isMultiplayer()) {
-            switchScreen(event, "FXML/SinglePlayerEndScreen.fxml");
-        }
-        else if(manage.isMultiplayer()){
-            switchScreen(event, "FXML/MultiScoreScreen.fxml");
-        }
+    public void endPlay () throws IOException {
+        switchScreen("FXML/SinglePlayerEndScreen.fxml");
     }
 
     @FXML
     public void multiPlay (Event event) throws IOException {
-        manage.setMultiplayer(true);
+        manage.setMultiPlayer(true);
         switchScreen(event, "FXML/ConnectAsScreen.fxml");
     }
 
@@ -116,7 +112,8 @@ public class ScreenController {
         }
         else{
             manage.setPlayerName(playerName);
-            BackendManager.getInstance().addPlayer(playerName);
+            manage.setLocalPlayer(manage.addPlayer(playerName));
+            new Thread(() -> manage.cacheAnswers()).start();
             BackendManager.getInstance().setHostMode(true);
             BackendManager.getInstance().setNumOfClients(Integer.parseInt(numberPlayers));
             BackendManager.getInstance().startNetwork();
@@ -173,8 +170,6 @@ public class ScreenController {
                     }
                 });
             }).start();
-
-            //switchScreen(event, "FXML/BoggleScreen.fxml");
         }
     }
 
@@ -196,6 +191,7 @@ public class ScreenController {
                     });
                 } else if(oldInt.intValue() > newInt.intValue()){
                     manage.setPlayerName(playerName);
+                    manage.setLocalPlayer(new Player(playerName));
                     Platform.runLater(() -> {
                         try {
                             switchScreen( "FXML/ClientWaitScreen.fxml");
@@ -222,9 +218,34 @@ public class ScreenController {
     }
 
     public void handleEndGame(){
-        if(!BackendManager.getInstance().getHostMode()){
-            BackendManager.getInstance().sendPlayerObject(GameManager.getInstance().getLocalPlayer());
-
+        if(manage.isMultiPlayer()){
+            manage.getGotAllScoresProperty().addListener((observable, oldBool, newBool) -> {
+                if (newBool) {
+                    Platform.runLater(() -> {
+                        try {
+                            switchScreen("FXML/MultiScoreScreen.fxml");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            });
+            if(!BackendManager.getInstance().getHostMode()){
+                BackendManager.getInstance().sendPlayerObject(GameManager.getInstance().getLocalPlayer());
+            } else {
+                BackendManager.getInstance().getAllWordsProperty().addListener((observable, oldInt, newInt) -> {
+                    if(newInt.intValue() >= BackendManager.getInstance().getNumOfClients()){
+                        GameManager.getInstance().calculateMultiPlayerScores();
+                        BackendManager.getInstance().sendAllScores();
+                    }
+                });
+            }
+        } else {
+            try {
+                endPlay();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }

@@ -2,6 +2,7 @@ package edu.unl.cse.csce361.boggle.backend.network;
 
 import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.logic.GameManager;
+import edu.unl.cse.csce361.boggle.logic.Player;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class ClientHandler implements Runnable {
@@ -87,8 +87,8 @@ public class ClientHandler implements Runnable {
                             case PLAYER_NAME:
                                 // Got player name from client
                                 if(!BackendManager.getInstance().checkPlayer((String) data.getValue())){
-                                    BackendManager.getInstance().addPlayer((String) data.getValue());
-                                    queueData(OpCode.WAIT_TO_START, null);
+                                    Player player = BackendManager.getInstance().addPlayer((String) data.getValue());
+                                    queueData(OpCode.WAIT_TO_START, player);
                                     clientIsReady = true;
                                 } else {
                                     queueData(OpCode.NAME_TAKEN, null);
@@ -102,15 +102,17 @@ public class ClientHandler implements Runnable {
                                 // Client started game
                                 break;
                             case FINISHED:
-                                // client finished game
+                                // Client finished game
                                 break;
                             case WORD_LIST:
-                                // Got word list from client
-                                //TODO GameManager.getInstance().addWordList(inStream.readObject());
+                                // Player object with word list
+                                GameManager.getInstance().addPlayerObject((Player) data.getValue());
+                                BackendManager.getInstance().getAllWordsProperty()
+                                        .setValue(BackendManager.getInstance().getAllWordsProperty().getValue() + 1);
                                 break;
                             case ALL_SCORES:
                                 // Client wants all the scores
-                                //queueData(OpCode.ALL_SCORES);
+                                queueData(OpCode.ALL_SCORES, GameManager.getInstance().getPlayers());
                                 break;
                             case EXIT:
                                 // Client has exited
@@ -162,20 +164,13 @@ public class ClientHandler implements Runnable {
                                 // Sending board to player
                             case START_GAME:
                                 // Telling player to start game
-                                outStream.writeObject(dataQueue.poll());
-                                break;
                             case FINISHED:
                                 // Telling player everyone has finished
-                                outStream.writeObject(OpCode.FINISHED);
-                                break;
                             case WORD_LIST:
                                 // Telling client to send word list
-                                outStream.writeObject(OpCode.WORD_LIST);
-                                break;
                             case ALL_SCORES:
                                 // Sending scores to client
-                                outStream.writeObject(OpCode.ALL_SCORES);
-                                //TODO outStream.writeObject(GameManager.getInstance().getScores());
+                                outStream.writeObject(dataQueue.poll());
                                 break;
                             case EXIT:
                                 // Telling client server is exiting

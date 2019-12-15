@@ -12,7 +12,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +37,7 @@ public class BackendManager {
     // Observable State Properties
     private BooleanProperty allReady = new SimpleBooleanProperty(false);
     private IntegerProperty nameTaken = new SimpleIntegerProperty(0);
+    private IntegerProperty gotAllWords = new SimpleIntegerProperty(0);
 
 
     private BackendManager() {
@@ -70,8 +70,8 @@ public class BackendManager {
               .filter(s -> s.equals(playerName)).count() != 0;
     }
 
-    public void addPlayer(String playerName){
-        GameManager.getInstance().addPlayer(playerName);
+    public Player addPlayer(String playerName){
+        return GameManager.getInstance().addPlayer(playerName);
     }
 
     public String startNetwork() {
@@ -128,7 +128,7 @@ public class BackendManager {
         return nameTaken;
     }
 
-    // Shread Com
+    // Shared Com
     public BooleanProperty getAllReadyProperty(){
         return this.allReady;
     }
@@ -158,6 +158,18 @@ public class BackendManager {
         this.server.sendDataToAllClients(OpCode.START_GAME, null);
     }
 
+    public int getNumOfClients(){
+        return this.numOfClients;
+    }
+
+    public void sendAllScores(){
+        server.sendDataToAllClients(OpCode.ALL_SCORES, GameManager.getInstance().getPlayers());
+        GameManager.getInstance().getGotAllScoresProperty().setValue(true);
+    }
+
+    public IntegerProperty getAllWordsProperty() {
+        return this.gotAllWords;
+    }
 
     // Dictionary tools
     public Set<String> getDictionary() {

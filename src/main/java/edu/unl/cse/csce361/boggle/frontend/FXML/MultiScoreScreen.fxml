@@ -21,7 +21,7 @@
          </font>
       </Text>
       <ListView fx:id="multiScoreList" layoutX="210.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" />
-      <Button layoutX="172.0" layoutY="324.0" mnemonicParsing="false" onAction="#exitGame" prefHeight="26.0" prefWidth="51.0" text="Exit" />
-      <Button layoutX="380.0" layoutY="324.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="73.0" text="Play Again" />
+      <Button layoutX="172.0" layoutY="324.0" mnemonicParsing="false" onAction="#mainMenu" prefHeight="26.0" prefWidth="51.0" text="Main Menu" />
+      <Button layoutX="380.0" layoutY="324.0" mnemonicParsing="false" onAction="#newRound" prefHeight="26.0" prefWidth="73.0" text="Play Again" />
    </children>
 </AnchorPane>

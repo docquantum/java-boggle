@@ -2,12 +2,14 @@ package edu.unl.cse.csce361.boggle.backend.network;
 
 import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.logic.GameManager;
+import edu.unl.cse.csce361.boggle.logic.Player;
 import javafx.util.Pair;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 
 public class BoggleClient implements Runnable{
     private final String debugName = "Client";
@@ -88,6 +90,7 @@ public class BoggleClient implements Runnable{
                             BackendManager.getInstance().getNameTakenProperty().setValue(BackendManager.getInstance().getNameTakenProperty().get() + 1);
                             break;
                         case WAIT_TO_START:
+                            GameManager.getInstance().setLocalPlayer((Player) data.getValue());
                             BackendManager.getInstance().getNameTakenProperty().setValue(BackendManager.getInstance().getNameTakenProperty().get() - 1);
                             new Thread(() -> {
                                 while(!self.gameBoardReceived){
@@ -114,10 +117,11 @@ public class BoggleClient implements Runnable{
                             //TODO GameManager.getInstance().endGame();
                             break;
                         case WORD_LIST:
-                            //TODO sendDataToServer(OpCode.WORD_LIST, GameManager.getInstance().getPlayerWords());
+                            sendDataToServer(OpCode.WORD_LIST, GameManager.getInstance().getLocalPlayer());
                             break;
                         case ALL_SCORES:
-                            //TODO Figure out what to do with the scores
+                            GameManager.getInstance().setPlayers((Set<Player>) data.getValue());
+                            GameManager.getInstance().getGotAllScoresProperty().setValue(true);
                             break;
                         case EXIT:
                             stopClient();
@@ -181,12 +185,12 @@ public class BoggleClient implements Runnable{
                             outStream.writeObject(OpCode.FINISHED);
                             break;
                         case WORD_LIST:
-                            // Send server the words from the player
-                            //TODO outStream.writeObject(GameManager.getInstance().getPlayerWords());
+                            // Send server the player object from the player
+                            outStream.writeObject(dataQueue.poll());
                             break;
                         case ALL_SCORES:
                             // Ask server to get all scores
-                            outStream.writeObject(OpCode.ALL_SCORES);
+                            outStream.writeObject(dataQueue.poll());
                             break;
                         case EXIT:
                             // Tell server that client is exiting
