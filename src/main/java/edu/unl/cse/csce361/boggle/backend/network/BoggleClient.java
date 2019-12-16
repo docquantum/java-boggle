@@ -7,6 +7,7 @@ import javafx.util.Pair;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
@@ -38,17 +39,25 @@ public class BoggleClient implements Runnable{
         self = this;
     }
 
-    public void stopClient() throws IOException, InterruptedException {
+    public void stopClient() {
         NetworkUtils.debugPrint(debugName,"Stopping client");
         running = false;
         synchronized (selfThread){
             selfThread.notify();
         }
-        inStream.close();
-        outStream.close();
-        socket.close();
-        sendData.join();
-        getData.join();
+        try {
+            inStream.close();
+            outStream.close();
+            socket.close();
+        } catch (IOException e) {
+            NetworkUtils.debugPrint(debugName, "Closing streams");
+        }
+        try{
+            sendData.join();
+            getData.join();
+        } catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
     public synchronized void sendDataToServer(OpCode code, Object data){
@@ -120,11 +129,15 @@ public class BoggleClient implements Runnable{
                             sendDataToServer(OpCode.WORD_LIST, GameManager.getInstance().getLocalPlayer());
                             break;
                         case ALL_SCORES:
-                            GameManager.getInstance().setPlayers((Set<Player>) data.getValue());
+                            if(data.getValue() instanceof HashSet){
+                                GameManager.getInstance().setPlayers((HashSet<Player>) data.getValue());
+                                GameManager.getInstance().getPlayers().forEach(p -> System.out.println(p.getPlayerName() + p.getPlayerScore()));
+                                NetworkUtils.debugPrint(debugName, data.getValue().toString());
+                            }
                             GameManager.getInstance().getGotAllScoresProperty().setValue(true);
                             break;
                         case EXIT:
-                            stopClient();
+                            self.running = false;
                             break;
                         default:
                             break;
@@ -132,16 +145,10 @@ public class BoggleClient implements Runnable{
                 } catch (IOException e){
                     if(self.isRunning()){
                         e.printStackTrace();
-                        try {
-                            stopClient();
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        } catch (InterruptedException ex) {
-                            ex.printStackTrace();
-                        }
+                        self.running = false;
                     }
                     NetworkUtils.debugPrint(debugName, "Connection Closed");
-                } catch(ClassNotFoundException | InterruptedException e) {
+                } catch(ClassNotFoundException e) {
                     e.printStackTrace();
                 }
             }
@@ -220,12 +227,6 @@ public class BoggleClient implements Runnable{
 
         NetworkUtils.debugPrint(debugName, "Closing: " + socket);
 
-        try {
-            stopClient();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        stopClient();
     }
 }

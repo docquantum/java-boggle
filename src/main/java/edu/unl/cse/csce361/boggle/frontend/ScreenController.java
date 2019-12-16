@@ -233,8 +233,8 @@ public class ScreenController {
             if(!BackendManager.getInstance().getHostMode()){
                 BackendManager.getInstance().sendPlayerObject(GameManager.getInstance().getLocalPlayer());
             } else {
-                BackendManager.getInstance().getAllWordsProperty().addListener((observable, oldInt, newInt) -> {
-                    if(newInt.intValue() >= BackendManager.getInstance().getNumOfClients()){
+                BackendManager.getInstance().getAllWordsProperty().addListener((observable, oldBool, newBool) -> {
+                    if(newBool){
                         GameManager.getInstance().calculateMultiPlayerScores();
                         BackendManager.getInstance().sendAllScores();
                     }

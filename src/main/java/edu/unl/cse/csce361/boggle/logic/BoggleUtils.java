@@ -36,8 +36,7 @@ public class BoggleUtils {
 
     public static void calculateAllScores(Set<String> solutions, Set<Player> players){
         removeDupilicates(players);
-        players.forEach(p -> p.setPlayerScore(calculateScore(solutions, p.getWords())));
-        players.forEach(p -> p.addToPlayerTotalScore(p.getPlayerScore()));
+        players.forEach(p -> p.addToPlayerScore(calculateScore(solutions, p.getWords())));
     }
 
     public synchronized static void removeDupilicates(Set<Player> players){

@@ -17,6 +17,7 @@ import java.util.Set;
 
 import static edu.unl.cse.csce361.boggle.backend.DictionaryLoader.getFilePathsInDir;
 import static edu.unl.cse.csce361.boggle.backend.DictionaryLoader.getLinesInFiles;
+import static java.lang.Thread.sleep;
 
 public class BackendManager {
 
@@ -37,7 +38,8 @@ public class BackendManager {
     // Observable State Properties
     private BooleanProperty allReady = new SimpleBooleanProperty(false);
     private IntegerProperty nameTaken = new SimpleIntegerProperty(0);
-    private IntegerProperty gotAllWords = new SimpleIntegerProperty(0);
+    private BooleanProperty gotAllWords = new SimpleBooleanProperty(false);
+    private int clientHandlerGotWords = 0;
 
 
     private BackendManager() {
@@ -132,6 +134,19 @@ public class BackendManager {
     public BooleanProperty getAllReadyProperty(){
         return this.allReady;
     }
+    public void disconnect(){
+        if(getHostMode()){
+            if(serverThread.isAlive()){
+                server.sendDataToAllClients(OpCode.EXIT, null);
+                server.stopServer();
+            }
+        } else {
+            if(clientThread.isAlive()){
+                client.sendDataToServer(OpCode.EXIT, null);
+                client.stopClient();
+            }
+        }
+    }
 
     // Server Comm
     public void setNumOfClients(int numOfClients){
@@ -167,7 +182,15 @@ public class BackendManager {
         GameManager.getInstance().getGotAllScoresProperty().setValue(true);
     }
 
-    public IntegerProperty getAllWordsProperty() {
+    public void clientHandlerGotWords() throws InterruptedException {
+        this.clientHandlerGotWords++;
+        sleep(100L);
+        if(this.clientHandlerGotWords == this.numOfClients){
+            this.gotAllWords.set(true);
+        }
+    }
+
+    public BooleanProperty getAllWordsProperty() {
         return this.gotAllWords;
     }
 

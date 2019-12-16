@@ -20,10 +20,10 @@ public class Player implements Serializable {
     public int getPlayerTotalScore() {
         return playerTotalScore;
     }
-    
-    public void addToPlayerTotalScore(int playerGameScore) {
-        this.playerTotalScore = playerGameScore + playerTotalScore;
-        this.playerScore = this.playerTotalScore;
+
+    public void addToPlayerScore(int roundScore) {
+        this.playerScore = roundScore;
+        this.playerTotalScore += roundScore;
     }
 
     public void setPlayerTotalScore(int totalScore){

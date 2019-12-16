@@ -111,7 +111,10 @@ public class GameManager {
 	}
 
 	public void resetState(){
-		this.setMultiPlayer(false);
+		if(isMultiPlayer){
+			new Thread(() -> BackendManager.getInstance().disconnect()).start();
+			isMultiPlayer = false;
+		}
 		genNewBoard();
 		this.setPlayerName(null);
 		this.setTotalScore(0);
@@ -133,13 +136,17 @@ public class GameManager {
 	}
 
 	public void setPlayers(Set<Player> players){
+		this.localPlayer = players.stream()
+				.filter(p -> p.getPlayerName().equals(localPlayer.getPlayerName()))
+				.findFirst().orElse(null);
 		this.players = players;
 	}
 
 	public List<String> getMultiPlayerScores(){
-		return this.players.stream()
+		return players.stream()
 				.map(player -> "Name: " + player.getPlayerName() +
-						"\tScore: " +player.getPlayerScore())
+						"\tScore: " + player.getPlayerScore() +
+						"\tTotal: " + player.getPlayerTotalScore())
 				.collect(Collectors.toList());
 	}
 

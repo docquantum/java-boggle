@@ -1,5 +1,6 @@
 package edu.unl.cse.csce361.boggle.frontend;
 
+import edu.unl.cse.csce361.boggle.backend.BackendManager;
 import edu.unl.cse.csce361.boggle.logic.GameManager;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -40,7 +41,7 @@ public class EndScreenController implements Initializable {
     @FXML
     public void newRound (Event event) throws IOException {
         if(manage.isMultiPlayer()){
-
+            // Not yet implemented
         } else{
             manage.genNewBoard();
             new Thread(() -> manage.cacheAnswers()).start();

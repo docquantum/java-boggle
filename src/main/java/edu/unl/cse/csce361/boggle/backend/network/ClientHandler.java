@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -24,6 +25,7 @@ public class ClientHandler implements Runnable {
     private Queue<Pair<OpCode, Object>> dataQueue;
     private boolean handlerRunning;
     private boolean clientIsReady;
+    private final ClientHandler self;
 
     public ClientHandler(BoggleServer boggleServer, Socket socket) throws IOException {
         this.boggleServer = boggleServer;
@@ -33,6 +35,7 @@ public class ClientHandler implements Runnable {
         this.handlerRunning = true;
         this.clientIsReady = false;
         this.dataQueue = new LinkedList<>();
+        this.self = this;
     }
 
     public boolean isConnected(){
@@ -41,17 +44,25 @@ public class ClientHandler implements Runnable {
 
     public boolean clientIsReady(){return clientIsReady;}
 
-    public void stopHandler() throws InterruptedException, IOException {
+    public void stopHandler() {
         NetworkUtils.debugPrint(debugName,"Closing...");
         handlerRunning = false;
         synchronized (sendData){
             sendData.notify();
         }
-        inStream.close();
-        outStream.close();
-        socket.close();
-        getData.join();
-        sendData.join();
+        try {
+            inStream.close();
+            outStream.close();
+            socket.close();
+        } catch (IOException e){
+            NetworkUtils.debugPrint(debugName, "Closing socket");
+        }
+        try{
+            getData.join();
+            sendData.join();
+        } catch (InterruptedException e){
+            NetworkUtils.debugPrint(debugName, "Joining stream threads");
+        }
         boggleServer.cleanUpThread(Thread.currentThread());
     }
 
@@ -78,11 +89,11 @@ public class ClientHandler implements Runnable {
         this.getData = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(handlerRunning){
+                while(self.handlerRunning){
                     try {
                         NetworkUtils.debugPrint(debugName, "Waiting for input...");
                         Pair<OpCode, Object> data = (Pair<OpCode, Object>) inStream.readObject();
-                        NetworkUtils.debugPrint( debugName, "received " + data.getKey().toString());
+                        NetworkUtils.debugPrint( debugName, "received " + data);
                         switch (data.getKey()){
                             case PLAYER_NAME:
                                 // Got player name from client
@@ -107,8 +118,7 @@ public class ClientHandler implements Runnable {
                             case WORD_LIST:
                                 // Player object with word list
                                 GameManager.getInstance().addPlayerObject((Player) data.getValue());
-                                BackendManager.getInstance().getAllWordsProperty()
-                                        .setValue(BackendManager.getInstance().getAllWordsProperty().getValue() + 1);
+                                BackendManager.getInstance().clientHandlerGotWords();
                                 break;
                             case ALL_SCORES:
                                 // Client wants all the scores
@@ -116,16 +126,21 @@ public class ClientHandler implements Runnable {
                                 break;
                             case EXIT:
                                 // Client has exited
-                                stopHandler();
+                                self.handlerRunning = false;
+                                synchronized (Thread.currentThread()){
+                                    Thread.currentThread().notify();
+                                }
                                 break;
                             default:
                                 break;
                         }
                     } catch (IOException | ClassNotFoundException | InterruptedException e) {
-                        e.printStackTrace();
-                        handlerRunning = false;
-                        synchronized (selfThread){
-                            selfThread.notify();
+                        if(self.handlerRunning){
+                            e.printStackTrace();
+                            self.handlerRunning = false;
+                            synchronized (selfThread){
+                                selfThread.notify();
+                            }
                         }
                     }
                 }
@@ -138,7 +153,13 @@ public class ClientHandler implements Runnable {
         this.sendData = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(handlerRunning){
+                while(self.handlerRunning){
+                    try {
+                        // Make sure buffer is flushed to prevent bad cache
+                        outStream.reset();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     if(dataQueue.isEmpty()){
                         try {
                             // waiting until woken
@@ -150,9 +171,9 @@ public class ClientHandler implements Runnable {
                             e.printStackTrace();
                         }
                     }
-                    if(!handlerRunning) break;
+                    if(!self.handlerRunning) break;
                     try {
-                        NetworkUtils.debugPrint(debugName, "Server sending " + dataQueue.peek().getKey());
+                        NetworkUtils.debugPrint(debugName, "Server sending " + dataQueue.peek());
                         switch (dataQueue.peek().getKey()) {
                             case PLAYER_NAME:
                                 // Asking player for player name
@@ -164,8 +185,6 @@ public class ClientHandler implements Runnable {
                                 // Sending board to player
                             case START_GAME:
                                 // Telling player to start game
-                            case FINISHED:
-                                // Telling player everyone has finished
                             case WORD_LIST:
                                 // Telling client to send word list
                             case ALL_SCORES:
@@ -174,15 +193,15 @@ public class ClientHandler implements Runnable {
                                 break;
                             case EXIT:
                                 // Telling client server is exiting
-                                outStream.writeObject(OpCode.EXIT);
-                                stopHandler();
+                                outStream.writeObject(dataQueue.poll());
+                               self.handlerRunning = false;
                                 break;
                             default:
                                 break;
                         }
-                    } catch (IOException | InterruptedException e){
+                    } catch (IOException e){
                         e.printStackTrace();
-                        handlerRunning = false;
+                        self.handlerRunning = false;
                         synchronized (selfThread){
                             selfThread.notify();
                         }
@@ -201,12 +220,7 @@ public class ClientHandler implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        try {
-            stopHandler();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        stopHandler();
     }
 }
