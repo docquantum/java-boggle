@@ -1,5 +1,7 @@
 #   BOGGLE
 
+Created as a group project for a Software Engineering course at University of Nebraska--Lincoln. Contributors inclue Nirmitee Gite, Jeremiah Cantu, Isaac Askey, and myself. This project has been released under GPLv3 with permission from the contributors.
+
 ##  Instructions to build and run the program
 
 Commit 446b57a8 (12:01):
